@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArcSafe ⚡ by RC</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0e0f11;--bg2:#141618;--bg3:#1c1e22;--bg4:#242628;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#f0f0ee;--text2:#9a9a96;--text3:#5e5e5a;
+  --accent:#e85c2c;--accent2:#f07a50;--gold:#d4a843;--teal:#2ab89a;
+  --blue:#4a8fe8;--red:#e24b4a;--purple:#a855f7;--green:#4caf50;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --radius:12px;--radius-sm:8px;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;min-height:100vh;}
+
+/* NAV */
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+.header-left{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;}
+.header-title{font-size:15px;font-weight:600;letter-spacing:-.02em;}
+.header-sub{font-size:11px;color:var(--text2);}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.year-selector{display:flex;gap:4px;background:var(--bg3);border-radius:var(--radius-sm);padding:3px;border:1px solid var(--border);}
+.year-tab{padding:4px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border:none;background:transparent;font-family:var(--font);transition:all .15s;}
+.year-tab.active{background:var(--accent);color:#fff;}
+.year-tab:hover:not(.active){color:var(--text);background:var(--bg4);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .15s;white-space:nowrap;}
+.btn:hover{color:var(--text);background:var(--bg4);}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn-primary:hover{opacity:.88;color:#fff;}
+
+/* PAGE TABS */
+.page-tabs{display:flex;gap:2px;background:var(--bg3);border-bottom:1px solid var(--border);padding:0 28px;overflow-x:auto;}
+.page-tab{padding:11px 18px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;}
+.page-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.page-tab:hover:not(.active){color:var(--text);}
+
+/* PAGES */
+.page{display:none;}.page.active{display:block;}
+.main{padding:24px 28px;max-width:1400px;margin:0 auto;}
+.section-label{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;margin-top:8px;}
+
+/* KPI GRIDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px;}
+.kpi-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px;}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:border-color .15s;}
+.kpi-card:hover{border-color:var(--border2);}
+.kpi-card.cb-accent{border-top:2px solid var(--accent);}
+.kpi-card.cb-gold{border-top:2px solid var(--gold);}
+.kpi-card.cb-teal{border-top:2px solid var(--teal);}
+.kpi-card.cb-red{border-top:2px solid var(--red);}
+.kpi-card.cb-blue{border-top:2px solid var(--blue);}
+.kpi-card.cb-purple{border-top:2px solid var(--purple);}
+.kpi-card.cb-green{border-top:2px solid var(--green);}
+.kpi-label{font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:500;}
+.kpi-value{font-size:28px;font-weight:300;letter-spacing:-.04em;line-height:1;}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* CHART CARDS */
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+.chart-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:8px;}
+.chart-title{font-size:13px;font-weight:600;}
+.chart-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+.badge{font-size:10px;padding:3px 8px;border-radius:4px;font-weight:600;white-space:nowrap;}
+.badge-accent{background:rgba(232,92,44,.15);color:var(--accent2);}
+.badge-red{background:rgba(226,75,74,.15);color:#f07a79;}
+.badge-teal{background:rgba(42,184,154,.15);color:var(--teal);}
+.badge-gold{background:rgba(212,168,67,.15);color:var(--gold);}
+.badge-blue{background:rgba(74,143,232,.15);color:var(--blue);}
+.badge-purple{background:rgba(168,85,247,.15);color:var(--purple);}
+
+/* LAYOUT GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+.grid-21{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px;}
+.grid-12{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:20px;}
+.full{margin-bottom:20px;}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+
+/* PILLS */
+.pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;}
+.pill-red{background:rgba(226,75,74,.15);color:#f07a79;}
+.pill-amber{background:rgba(212,168,67,.15);color:#d4a843;}
+.pill-teal{background:rgba(42,184,154,.15);color:var(--teal);}
+.pill-blue{background:rgba(74,143,232,.15);color:var(--blue);}
+.pill-purple{background:rgba(168,85,247,.15);color:var(--purple);}
+.pill-green{background:rgba(76,175,80,.15);color:var(--green);}
+.pill-orange{background:rgba(232,92,44,.15);color:var(--accent2);}
+
+/* PROGRESS */
+.prog-wrap{width:100%;background:var(--bg3);border-radius:4px;height:4px;}
+.prog-bar{height:4px;border-radius:4px;transition:width .4s;}
+
+/* MONTH STRIP */
+.month-strip{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;margin-top:6px;}
+.month-cell{border-radius:6px;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;border:1px solid var(--border);background:var(--bg3);padding:10px 4px;transition:all .15s;}
+.month-cell:hover{border-color:var(--border2);background:var(--bg4);}
+.month-name{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;}
+.month-count{font-size:16px;font-weight:300;color:var(--text);line-height:1;margin-top:2px;}
+.month-cell[data-level="0"]{opacity:.4;}
+.month-cell[data-level="1"] .month-count{color:var(--teal);}
+.month-cell[data-level="2"] .month-count{color:var(--gold);}
+.month-cell[data-level="3"] .month-count{color:var(--accent);}
+
+/* TABLES */
+.table-scroll{overflow-x:auto;}
+.data-table{width:100%;border-collapse:collapse;min-width:600px;}
+.data-table th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:0 8px 10px 0;text-align:left;white-space:nowrap;}
+.data-table td{padding:8px 8px 8px 0;border-top:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.data-table tr:hover td{background:rgba(255,255,255,.02);}
+
+/* OSHA TABLE */
+.osha-table{width:100%;border-collapse:collapse;font-size:12px;}
+.osha-table th{background:var(--bg3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text2);padding:10px 12px;text-align:left;border:1px solid var(--border);white-space:nowrap;}
+.osha-table td{padding:9px 12px;border:1px solid var(--border);color:var(--text);}
+.osha-table tr:nth-child(even) td{background:var(--bg3);}
+.osha-total td{color:var(--gold);font-weight:600;background:rgba(212,168,67,.08) !important;}
+.osha-highlight{color:var(--accent) !important;font-weight:600;}
+
+/* REC LIST */
+.rec-list{display:flex;flex-direction:column;gap:8px;}
+.rec-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);}
+.rec-icon{width:28px;height:28px;min-width:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.rec-text{font-size:12px;color:var(--text2);line-height:1.4;}
+.rec-text strong{color:var(--text);font-weight:500;display:block;margin-bottom:2px;}
+
+/* INITIATIVE */
+.init-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.init-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .15s;}
+.init-card:hover{border-color:var(--border2);}
+.init-card.selected{border-color:var(--accent);}
+.init-icon{font-size:22px;margin-bottom:8px;}
+.init-title{font-size:11px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:4px;}
+.init-count{font-size:24px;font-weight:300;color:var(--accent);}
+.init-label{font-size:10px;color:var(--text3);}
+
+/* CLASS TABS */
+.class-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.class-tab{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);transition:all .15s;}
+.class-tab.active-near{background:rgba(168,85,247,.2);border-color:var(--purple);color:var(--purple);}
+.class-tab.active-first{background:rgba(42,184,154,.2);border-color:var(--teal);color:var(--teal);}
+.class-tab.active-record{background:rgba(226,75,74,.2);border-color:var(--red);color:#f07a79;}
+.class-tab.active-prop{background:rgba(212,168,67,.2);border-color:var(--gold);color:var(--gold);}
+.class-tab.active-all{background:rgba(232,92,44,.2);border-color:var(--accent);color:var(--accent2);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9000;overflow-y:auto;align-items:flex-start;justify-content:center;padding:40px 16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:28px;width:560px;max-width:100%;margin:auto;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.modal-title{font-size:15px;font-weight:600;}
+.close-btn{width:28px;height:28px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:15px;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.06em;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 12px;color:var(--text);font-family:var(--font);font-size:13px;outline:none;transition:border-color .15s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+.form-select option{background:var(--bg2);}
+.form-textarea{resize:vertical;min-height:60px;}
+.submit-btn{width:100%;padding:10px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:opacity .15s;margin-top:4px;}
+.submit-btn:hover{opacity:.88;}
+.form-section-head{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);padding:10px 0 6px;border-top:1px solid var(--border);margin-top:8px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--teal);border-radius:var(--radius-sm);padding:10px 16px;font-size:12px;color:var(--teal);z-index:9500;display:none;align-items:center;gap:8px;white-space:nowrap;}
+.toast.show{display:flex;}
+
+/* IMPORT MODAL */
+.import-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;width:480px;max-width:100%;margin:auto;}
+.import-step{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border);}
+.import-step:last-of-type{border-bottom:none;}
+.import-num{width:26px;height:26px;min-width:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--accent);color:#fff;flex-shrink:0;}
+.import-step-text{font-size:12px;color:var(--text2);line-height:1.5;}
+.import-step-text strong{color:var(--text);display:block;margin-bottom:2px;font-size:13px;}
+.import-drop{border:2px dashed var(--border2);border-radius:var(--radius);padding:28px;text-align:center;margin:16px 0;cursor:pointer;transition:border-color .15s;}
+.import-drop:hover,.import-drop.dragover{border-color:var(--accent);}
+.import-drop i{font-size:32px;color:var(--text3);display:block;margin-bottom:8px;}
+.import-drop-text{font-size:13px;color:var(--text2);}
+.import-drop-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+.import-actions{display:flex;gap:10px;margin-top:4px;}
+.import-merge-opt{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;}
+.import-merge-opt input[type=radio]{accent-color:var(--accent);width:16px;height:16px;}
+.import-merge-label{font-size:12px;color:var(--text);font-weight:500;}
+.import-merge-sub{font-size:11px;color:var(--text2);}
+.import-status{font-size:12px;min-height:18px;margin-top:8px;text-align:center;}
+
+/* INIT LOG */
+.init-log{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;}
+.init-log-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:12px;gap:8px;}
+.init-del{cursor:pointer;color:var(--text3);font-size:14px;padding:2px 4px;}
+.init-del:hover{color:var(--red);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
+
+/* ROLE & ACCESS */
+#roleIndicator{display:none;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;}
+#roleIndicator.admin{background:rgba(232,92,44,.15);color:#f07a50;display:flex;}
+#roleIndicator.viewer{background:rgba(74,143,232,.15);color:#4a8fe8;display:flex;}
+.write-control{transition:opacity .2s;}
+body.view-only .write-control{opacity:.3;pointer-events:none;cursor:not-allowed;}
+
+/* LOCK / SETUP SCREEN */
+.auth-screen{position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:#0e0f11;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.auth-screen.hidden{display:none;}
+.auth-card{width:400px;max-width:100%;background:#141618;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:36px 32px;display:flex;flex-direction:column;align-items:center;}
+.auth-logo{width:56px;height:56px;border-radius:14px;background:#e85c2c;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;margin-bottom:16px;}
+.auth-title{font-size:20px;font-weight:600;color:#f0f0ee;letter-spacing:-.02em;margin-bottom:4px;text-align:center;}
+.auth-sub{font-size:12px;color:#5e5e5a;margin-bottom:24px;text-align:center;line-height:1.6;}
+.auth-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#5e5e5a;display:block;margin-bottom:5px;width:100%;text-align:left;}
+.auth-input-wrap{width:100%;position:relative;margin-bottom:12px;}
+.auth-input{width:100%;background:#1c1e22;border:1px solid rgba(255,255,255,0.13);border-radius:10px;padding:12px 44px 12px 16px;color:#f0f0ee;font-family:'DM Mono',monospace;font-size:14px;outline:none;letter-spacing:.04em;transition:border-color .15s;}
+.auth-input:focus{border-color:#e85c2c;}
+.auth-input.error{border-color:#e24b4a;animation:shake .35s ease;}
+.auth-eye{position:absolute;right:13px;top:50%;transform:translateY(-50%);cursor:pointer;color:#5e5e5a;font-size:16px;background:none;border:none;padding:4px;}
+.auth-eye:hover{color:#9a9a96;}
+.auth-btn{width:100%;padding:13px;background:#e85c2c;border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s;margin-top:4px;}
+.auth-btn:hover{opacity:.88;}
+.auth-btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.13);color:#9a9a96;margin-top:8px;}
+.auth-btn.secondary:hover{color:#f0f0ee;border-color:rgba(255,255,255,0.25);}
+.auth-error{font-size:12px;color:#e24b4a;margin-top:8px;min-height:16px;text-align:center;width:100%;}
+.auth-success{font-size:12px;color:#2ab89a;margin-top:8px;min-height:16px;text-align:center;width:100%;}
+.auth-divider{width:100%;border:none;border-top:1px solid rgba(255,255,255,0.07);margin:16px 0;}
+.auth-strength{width:100%;height:3px;background:#1c1e22;border-radius:2px;margin-top:6px;margin-bottom:12px;overflow:hidden;}
+.auth-strength-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;}
+.setup-step{display:flex;align-items:center;gap:8px;font-size:11px;color:#5e5e5a;margin-bottom:16px;}
+.setup-step-dot{width:20px;height:20px;border-radius:50%;border:1px solid rgba(255,255,255,0.13);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.setup-step-dot.active{background:#e85c2c;border-color:#e85c2c;color:#fff;}
+.setup-step-dot.done{background:#2ab89a;border-color:#2ab89a;color:#fff;}
+
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="logo-mark"><i class="ti ti-bolt"></i></div>
+    <div>
+      <div class="header-title">ArcSafe ⚡ <span style="font-weight:300;">by RC</span></div>
+      <div class="header-sub">Incident Tracking · OSHA Reporting · Safety Intelligence</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div id="roleIndicator"></div>
+    <div id="syncStatus" title="Sync status" style="font-size:16px;cursor:pointer;" onclick="sbLoadAll()"></div>
+    <div class="year-selector" id="yearSelector"></div>
+    <button class="btn btn-primary write-control" onclick="openModal()"><i class="ti ti-plus" style="font-size:13px"></i> Log Incident</button>
+    <button class="btn write-control" onclick="openImportModal()"><i class="ti ti-upload" style="font-size:13px"></i> Import</button>
+    <button class="btn" onclick="exportAll()"><i class="ti ti-download" style="font-size:13px"></i> Export</button>
+    <button class="btn write-control" onclick="openChangePw()" title="Change passwords"><i class="ti ti-lock" style="font-size:13px"></i> Passwords</button>
+    <input type="file" id="importFileInput" accept=".json,.csv" style="display:none" onchange="handleImportFile(event)">
+  </div>
+</header>
+
+<nav class="page-tabs">
+  <div class="page-tab active" data-page="overview" onclick="switchPage('overview',this)"><i class="ti ti-layout-dashboard" style="font-size:13px;margin-right:5px"></i>Overview</div>
+  <div class="page-tab" data-page="incidents" onclick="switchPage('incidents',this)"><i class="ti ti-alert-triangle" style="font-size:13px;margin-right:5px"></i>Incidents</div>
+  <div class="page-tab" data-page="workforce" onclick="switchPage('workforce',this)"><i class="ti ti-users" style="font-size:13px;margin-right:5px"></i>Workforce</div>
+  <div class="page-tab" data-page="osha" onclick="switchPage('osha',this)"><i class="ti ti-file-certificate" style="font-size:13px;margin-right:5px"></i>OSHA 300 / 300A</div>
+  <div class="page-tab" data-page="initiative" onclick="switchPage('initiative',this)"><i class="ti ti-rocket" style="font-size:13px;margin-right:5px"></i>Safety Initiative</div>
+  <div class="page-tab" data-page="drills" onclick="switchPage('drills',this)"><i class="ti ti-flame" style="font-size:13px;margin-right:5px"></i>Emergency Drills</div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     PAGE: OVERVIEW
+═══════════════════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-overview">
+<div class="main">
+
+  <div class="section-label">Year at a glance</div>
+  <div class="kpi-grid">
+    <div class="kpi-card cb-accent">
+      <div class="kpi-label">Total Incidents</div>
+      <div class="kpi-value" id="kpi-total">—</div>
+      <div class="kpi-sub" id="kpi-total-sub">Year to date</div>
+    </div>
+    <div class="kpi-card cb-red">
+      <div class="kpi-label">Recordables</div>
+      <div class="kpi-value" id="kpi-record">—</div>
+      <div class="kpi-sub">OSHA recordable incidents</div>
+    </div>
+    <div class="kpi-card cb-teal">
+      <div class="kpi-label">First Aids</div>
+      <div class="kpi-value" id="kpi-firstaid">—</div>
+      <div class="kpi-sub">No lost time / restricted</div>
+    </div>
+    <div class="kpi-card cb-purple">
+      <div class="kpi-label">Near Misses</div>
+      <div class="kpi-value" id="kpi-nearmiss">—</div>
+      <div class="kpi-sub">Reported close calls</div>
+    </div>
+    <div class="kpi-card cb-gold">
+      <div class="kpi-label">Property Damage</div>
+      <div class="kpi-value" id="kpi-propdmg">—</div>
+      <div class="kpi-sub">Equipment / property</div>
+    </div>
+    <div class="kpi-card cb-blue">
+      <div class="kpi-label">Apprentice Share</div>
+      <div class="kpi-value" id="kpi-apprentice">—</div>
+      <div class="kpi-sub">of total incidents</div>
+    </div>
+  </div>
+
+  <div class="grid-21">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Monthly incident volume</div><div class="chart-sub">Jan – Dec · click bar to filter</div></div>
+        <span class="badge badge-accent" id="monthly-badge">—</span>
+      </div>
+      <div style="position:relative;height:200px;"><canvas id="monthlyChart" role="img" aria-label="Monthly incident bar chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Classification breakdown</div><div class="chart-sub">By severity type</div></div>
+      </div>
+      <div class="legend" id="classLegend"></div>
+      <div style="position:relative;height:160px;"><canvas id="classChart" role="img" aria-label="Incident classification donut"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Day of week pattern</div><div class="chart-sub">Monday historically peaks</div></div>
+      </div>
+      <div style="position:relative;height:180px;"><canvas id="dowChart" role="img" aria-label="Day of week bar chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Injury type distribution</div><div class="chart-sub">All categories</div></div>
+      </div>
+      <div class="legend" id="injuryLegend"></div>
+      <div style="position:relative;height:160px;"><canvas id="injuryChart" role="img" aria-label="Injury types bar chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-card full">
+    <div class="chart-header">
+      <div><div class="chart-title">Annual calendar overview</div><div class="chart-sub">Incident density — click month to filter all charts</div></div>
+      <button class="btn" id="clearFilterBtn" onclick="clearMonthFilter()" style="display:none;font-size:11px;padding:4px 10px;"><i class="ti ti-x" style="font-size:11px"></i> Clear filter</button>
+    </div>
+    <div class="month-strip" id="monthStrip"></div>
+  </div>
+
+  <div class="grid-3">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Root cause analysis</div><div class="chart-sub">Primary causal factors</div></div></div>
+      <div style="position:relative;height:220px;"><canvas id="causeChart" role="img" aria-label="Cause horizontal bar chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Time of day pattern</div><div class="chart-sub">When injuries occur</div></div></div>
+      <div style="position:relative;height:220px;"><canvas id="timeChart" role="img" aria-label="Time of day bar chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Action priorities</div><div class="chart-sub">Data-driven focus areas</div></div></div>
+      <div class="rec-list" id="recList"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     PAGE: INCIDENTS
+═══════════════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-incidents">
+<div class="main">
+
+  <div class="section-label">Filter by classification</div>
+  <div class="class-tabs">
+    <div class="class-tab active-all" data-class="all" onclick="setClassFilter('all',this)">All Incidents</div>
+    <div class="class-tab" data-class="Near Miss" onclick="setClassFilter('Near Miss',this)">Near Misses</div>
+    <div class="class-tab" data-class="First Aid" onclick="setClassFilter('First Aid',this)">First Aid</div>
+    <div class="class-tab" data-class="Recordable" onclick="setClassFilter('Recordable',this)">Recordable</div>
+    <div class="class-tab" data-class="Property Damage" onclick="setClassFilter('Property Damage',this)">Property Damage</div>
+  </div>
+
+  <div class="kpi-grid-4" style="margin-bottom:20px;">
+    <div class="kpi-card cb-purple"><div class="kpi-label">Near Misses</div><div class="kpi-value" id="inc-nm">—</div></div>
+    <div class="kpi-card cb-teal"><div class="kpi-label">First Aids</div><div class="kpi-value" id="inc-fa">—</div></div>
+    <div class="kpi-card cb-red"><div class="kpi-label">Recordables</div><div class="kpi-value" id="inc-rec">—</div></div>
+    <div class="kpi-card cb-gold"><div class="kpi-label">Property Damage</div><div class="kpi-value" id="inc-pd">—</div></div>
+  </div>
+
+  <div class="chart-card full">
+    <div class="chart-header">
+      <div><div class="chart-title">Incident log</div><div class="chart-sub" id="incLogSub">All recorded incidents for selected year</div></div>
+      <span id="incLogCount" class="badge badge-accent">—</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="data-table" id="incidentTable">
+        <thead>
+          <tr>
+            <th>Date</th><th>Day</th><th>Injury Type</th><th>Classification</th>
+            <th>Worker Level</th><th>Time</th><th>PPE</th><th>Cause</th><th>Notes</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="incidentTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     PAGE: WORKFORCE
+═══════════════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-workforce">
+<div class="main">
+
+  <div class="section-label">Field workforce</div>
+  <div class="grid-2">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Incidents by worker level</div><div class="chart-sub">Field — apprentice, JW, foreman</div></div></div>
+      <div class="legend" id="wfLegend"></div>
+      <div style="position:relative;height:200px;"><canvas id="wfChart" role="img" aria-label="Workforce stacked bar chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Field worker breakdown</div><div class="chart-sub">By level — share of total</div></div></div>
+      <table class="data-table" id="wfTable"></table>
+    </div>
+  </div>
+
+  <div class="section-label">Office &amp; warehouse personnel</div>
+  <div class="grid-2">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Office personnel incidents</div><div class="chart-sub">Administration · PM · PE · PX · HR · Accounting</div></div></div>
+      <div style="position:relative;height:180px;"><canvas id="officeChart" role="img" aria-label="Office personnel incidents"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Warehouse personnel incidents</div><div class="chart-sub">Stockman · Admin · Manager · Production · Driver</div></div></div>
+      <div style="position:relative;height:180px;"><canvas id="warehouseChart" role="img" aria-label="Warehouse personnel incidents"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">All roles — full breakdown</div><div class="chart-sub">Every worker category, year to date</div></div></div>
+      <div style="position:relative;height:260px;"><canvas id="allRolesChart" role="img" aria-label="All roles bar chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">PPE compliance by worker group</div><div class="chart-sub">% of incidents with proper PPE worn</div></div></div>
+      <div style="position:relative;height:260px;"><canvas id="ppeChart" role="img" aria-label="PPE compliance chart"></canvas></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     PAGE: OSHA
+═══════════════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-osha">
+<div class="main">
+
+  <div class="section-label">OSHA 300A Summary — rates auto-calculate from incident data</div>
+  <div class="kpi-grid">
+    <div class="kpi-card cb-red">
+      <div class="kpi-label">Total Recordables</div>
+      <div class="kpi-value" id="o-total-rec">—</div>
+      <div class="kpi-sub">Cases on OSHA 300 log</div>
+    </div>
+    <div class="kpi-card cb-accent">
+      <div class="kpi-label">Days Away Cases</div>
+      <div class="kpi-value" id="o-days-away">—</div>
+      <div class="kpi-sub">Lost time injuries</div>
+    </div>
+    <div class="kpi-card cb-gold">
+      <div class="kpi-label">Restricted / Transfer</div>
+      <div class="kpi-value" id="o-restricted">—</div>
+      <div class="kpi-sub">Job transfer or restriction</div>
+    </div>
+    <div class="kpi-card cb-teal">
+      <div class="kpi-label">Other Recordables</div>
+      <div class="kpi-value" id="o-other-rec">—</div>
+      <div class="kpi-sub">Medical treatment beyond FA</div>
+    </div>
+    <div class="kpi-card cb-blue">
+      <div class="kpi-label">TRIR</div>
+      <div class="kpi-value" id="o-trir">—</div>
+      <div class="kpi-sub">Total recordable incident rate</div>
+    </div>
+    <div class="kpi-card cb-purple">
+      <div class="kpi-label">DART Rate</div>
+      <div class="kpi-value" id="o-dart">—</div>
+      <div class="kpi-sub">Days Away / Restricted / Transfer</div>
+    </div>
+  </div>
+
+  <!-- OSHA rate inputs -->
+  <div class="chart-card full" style="margin-bottom:20px;">
+    <div class="chart-header"><div><div class="chart-title">Rate calculation inputs</div><div class="chart-sub">Enter annual employee hours to calculate OSHA rates</div></div></div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div>
+        <label class="form-label" style="display:block;margin-bottom:4px;">Total hours worked (annual)</label>
+        <input type="number" class="form-input" id="oshaHours" value="200000" style="width:180px;" oninput="renderOSHA()">
+      </div>
+      <div>
+        <label class="form-label" style="display:block;margin-bottom:4px;">Number of employees</label>
+        <input type="number" class="form-input" id="oshaEmployees" value="50" style="width:120px;" oninput="renderOSHA()">
+      </div>
+      <div style="padding-top:18px;font-size:11px;color:var(--text3);">TRIR = (Recordables × 200,000) ÷ Hours Worked &nbsp;|&nbsp; DART = (Days Away + Restricted × 200,000) ÷ Hours Worked</div>
+    </div>
+  </div>
+
+  <!-- OSHA 300 LOG -->
+  <div class="chart-card full" style="margin-bottom:20px;">
+    <div class="chart-header">
+      <div><div class="chart-title">OSHA Form 300 — Log of Work-Related Injuries and Illnesses</div><div class="chart-sub" id="osha300year">Year: —</div></div>
+      <button class="btn" onclick="printOSHA()"><i class="ti ti-printer" style="font-size:13px"></i> Print / Export</button>
+    </div>
+    <p class="osha-print-note">Showing recordable incidents only. Near misses and first-aid-only cases are excluded per OSHA requirements.</p>
+    <div style="overflow-x:auto;">
+      <table class="osha-table" id="osha300Table">
+        <thead>
+          <tr>
+            <th style="width:30px;">#</th>
+            <th>Employee Name</th>
+            <th>Job Title</th>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Injury Description</th>
+            <th>Classify</th>
+            <th>Days Away</th>
+            <th>Days Restricted</th>
+            <th>Injury Type</th>
+          </tr>
+        </thead>
+        <tbody id="osha300Body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- OSHA 300A SUMMARY -->
+  <div class="grid-2">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">OSHA Form 300A — Annual Summary</div><div class="chart-sub">Post Feb 1 – Apr 30 each year</div></div></div>
+      <table class="osha-table" id="osha300ATable" style="font-size:12px;">
+        <thead><tr><th>Category</th><th>Count</th></tr></thead>
+        <tbody id="osha300ABody"></tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Recordable trend — monthly</div><div class="chart-sub">Recordable incidents per month</div></div></div>
+      <div style="position:relative;height:200px;"><canvas id="recTrendChart" role="img" aria-label="Recordable monthly trend"></canvas></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     PAGE: SAFETY INITIATIVE
+═══════════════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-initiative">
+<div class="main">
+
+  <div class="section-label">Safety initiative program — <span style="color:var(--text2);text-transform:none;letter-spacing:0;font-weight:400;">Track and report initiative activity by category</span></div>
+
+  <div class="init-grid" id="initCards"></div>
+
+  <div class="grid-2">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Initiative activity — monthly trend</div><div class="chart-sub">Entries per month by category</div></div></div>
+      <div class="legend" id="initLegend"></div>
+      <div style="position:relative;height:200px;"><canvas id="initTrendChart" role="img" aria-label="Initiative trend chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Distribution by initiative</div><div class="chart-sub">Total entries this year</div></div></div>
+      <div style="position:relative;height:200px;"><canvas id="initPieChart" role="img" aria-label="Initiative distribution pie chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- LOG ENTRY -->
+  <div class="chart-card full">
+    <div class="chart-header">
+      <div><div class="chart-title">Log initiative activity</div><div class="chart-sub">Record completed actions, observations, or reports</div></div>
+    </div>
+    <div class="form-row" style="margin-bottom:12px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Initiative category</label>
+        <select class="form-select" id="init_cat">
+          <option>Increase Emergency Preparedness</option>
+          <option>Increase Near Miss Reporting</option>
+          <option>Increase Employee Engagement in Safety Programs</option>
+          <option>Increase Project Team Safety Consistency</option>
+          <option>Increase Understanding with Root Cause Analysis</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-input" id="init_date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Activity description</label>
+      <textarea class="form-textarea" id="init_desc" placeholder="Describe the safety initiative activity completed..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn btn-primary write-control" onclick="addInitiative()"><i class="ti ti-plus" style="font-size:13px"></i> Log Activity</button>
+      <span style="font-size:11px;color:var(--text3);" id="initTotal">0 activities logged this year</span>
+    </div>
+  </div>
+
+  <!-- ACTIVITY LOG TABLE -->
+  <div class="chart-card full">
+    <div class="chart-header"><div><div class="chart-title">Activity log</div><div class="chart-sub">All logged initiative activities for selected year</div></div></div>
+    <div class="init-log" id="initLog" style="max-height:400px;"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     PAGE: EMERGENCY DRILLS
+═══════════════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-drills">
+<div class="main">
+
+  <div class="section-label">Emergency drill tracker — office &amp; warehouse</div>
+
+  <!-- KPI row -->
+  <div class="kpi-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:24px;" id="drillKpiRow"></div>
+
+  <!-- Summary charts -->
+  <div class="grid-2">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Drill pass / fail rate</div><div class="chart-sub">By drill type across all locations</div></div></div>
+      <div class="legend" id="drillResultLegend"></div>
+      <div style="position:relative;height:200px;"><canvas id="drillResultChart" role="img" aria-label="Drill pass fail chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Drills completed — monthly</div><div class="chart-sub">All locations combined</div></div></div>
+      <div style="position:relative;height:200px;"><canvas id="drillMonthChart" role="img" aria-label="Drill monthly chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Average completion time</div><div class="chart-sub">Minutes per drill type · lower is better</div></div></div>
+      <div style="position:relative;height:180px;"><canvas id="drillTimeChart" role="img" aria-label="Drill time chart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Coverage by location</div><div class="chart-sub">Drills completed per area</div></div></div>
+      <div style="position:relative;height:180px;"><canvas id="drillLocChart" role="img" aria-label="Drill location chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Log a new drill -->
+  <div class="chart-card full" style="margin-bottom:20px;">
+    <div class="chart-header"><div><div class="chart-title">Log emergency drill</div><div class="chart-sub">Record a completed drill event</div></div></div>
+    <div class="form-row" style="margin-bottom:12px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-input" id="d_date">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Drill type</label>
+        <select class="form-select" id="d_type">
+          <option>Fire</option>
+          <option>Earthquake</option>
+          <option>Medical Response</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:12px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Facility</label>
+        <select class="form-select" id="d_facility" onchange="updateDrillAreas()">
+          <option value="office">Office Building</option>
+          <option value="warehouse">Warehouse</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Location / Area</label>
+        <select class="form-select" id="d_area"></select>
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:12px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Start time</label>
+        <input type="time" class="form-input" id="d_start">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">End time (completion)</label>
+        <input type="time" class="form-input" id="d_end">
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:12px;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Result</label>
+        <select class="form-select" id="d_result">
+          <option value="Pass">Pass</option>
+          <option value="Pass with notes">Pass with notes</option>
+          <option value="Needs improvement">Needs improvement</option>
+          <option value="Fail">Fail</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Drill conductor / responsible party</label>
+        <input type="text" class="form-input" id="d_conductor" placeholder="Name or role">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px;">
+      <label class="form-label">Observations / corrective actions</label>
+      <textarea class="form-textarea" id="d_notes" placeholder="What went well, what needs improvement, any corrective actions required..."></textarea>
+    </div>
+    <button class="btn btn-primary write-control" onclick="addDrill()"><i class="ti ti-plus" style="font-size:13px"></i> Save Drill Record</button>
+  </div>
+
+  <!-- Drill log table -->
+  <div class="chart-card full">
+    <div class="chart-header">
+      <div><div class="chart-title">Drill log</div><div class="chart-sub">All recorded emergency drills</div></div>
+      <span class="badge badge-accent" id="drillLogCount">0 drills</span>
+    </div>
+
+    <!-- filter row -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;" id="drillFilterRow">
+      <select class="form-select" id="df_type" onchange="renderDrillLog()" style="width:160px;font-size:12px;padding:6px 10px;">
+        <option value="">All drill types</option>
+        <option>Fire</option><option>Earthquake</option><option>Medical Response</option>
+      </select>
+      <select class="form-select" id="df_facility" onchange="renderDrillLog()" style="width:160px;font-size:12px;padding:6px 10px;">
+        <option value="">All facilities</option>
+        <option value="office">Office</option>
+        <option value="warehouse">Warehouse</option>
+      </select>
+      <select class="form-select" id="df_result" onchange="renderDrillLog()" style="width:160px;font-size:12px;padding:6px 10px;">
+        <option value="">All results</option>
+        <option>Pass</option><option>Pass with notes</option>
+        <option>Needs improvement</option><option>Fail</option>
+      </select>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table class="data-table" id="drillTable">
+        <thead><tr>
+          <th>Date</th><th>Drill type</th><th>Facility</th><th>Area / Floor</th>
+          <th>Start</th><th>End</th><th>Duration</th><th>Result</th>
+          <th>Conductor</th><th>Notes</th><th></th>
+        </tr></thead>
+        <tbody id="drillTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- MODAL: LOG INCIDENT -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Log new incident</div>
+      <button class="close-btn" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="form-section-head" style="border-top:none;padding-top:0;">Basic info</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="f_date"></div>
+      <div class="form-group"><label class="form-label">Day of week</label>
+        <select class="form-select" id="f_dow"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Time of injury</label><input type="time" class="form-input" id="f_time_raw"></div>
+      <div class="form-group"><label class="form-label">Time window</label>
+        <select class="form-select" id="f_time"><option value="morning">Morning (7–10:30 AM)</option><option value="midday">Mid-day (10:30–12:30)</option><option value="postlunch">Post-lunch (12:30–1:30)</option><option value="afternoon">Afternoon (1:30–4:30)</option><option value="endshift">End of shift (4:30+)</option></select></div>
+    </div>
+
+    <div class="form-section-head">Classification &amp; injury</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Classification</label>
+        <select class="form-select" id="f_class"><option>Recordable</option><option>First Aid</option><option>Near Miss</option><option>Property Damage</option></select></div>
+      <div class="form-group"><label class="form-label">Injury type</label>
+        <select class="form-select" id="f_injury">
+          <option>Cut / Laceration</option><option>Strain / Sprain</option><option>Foreign Body (Eye)</option>
+          <option>Contusion / Bruise</option><option>Electrical / Burns</option><option>Flash Burn</option>
+          <option>Thermal Burn</option><option>Chemical Exposure</option><option>Electrical Shock</option>
+          <option>Concussion</option><option>Irritation / Respiratory</option><option>Property Damage Only</option><option>Other</option>
+        </select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">OSHA — days away from work</label><input type="number" class="form-input" id="f_days_away" value="0" min="0"></div>
+      <div class="form-group"><label class="form-label">OSHA — days restricted / transferred</label><input type="number" class="form-input" id="f_days_restricted" value="0" min="0"></div>
+    </div>
+
+    <div class="form-section-head">Worker info</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Worker group</label>
+        <select class="form-select" id="f_group" onchange="updateLevelOptions()">
+          <option value="field">Field</option>
+          <option value="office">Office</option>
+          <option value="warehouse">Warehouse</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Worker level / title</label>
+        <select class="form-select" id="f_level"></select></div>
+    </div>
+
+    <div class="form-section-head">Safety factors</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">PPE worn?</label>
+        <select class="form-select" id="f_ppe">
+          <option>Yes — complete</option><option>Yes — partial (Kevlar missing)</option>
+          <option>Yes — partial (eyewear issue)</option><option>Yes — partial (other)</option><option>No</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Stop Work Authority used?</label>
+        <select class="form-select" id="f_swa"><option>N/A</option><option>Yes — used</option><option>No — should have been used</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Primary cause / root factor</label>
+      <select class="form-select" id="f_cause">
+        <option>Improper tool use</option><option>Poor ergonomics / body positioning</option>
+        <option>Rushing / complacency</option><option>PPE failure</option><option>Lack of training</option>
+        <option>Inadequate hazard recognition</option><option>Failure to use mechanical aid</option>
+        <option>MOP / Stop Work violation</option><option>Lack of situational awareness</option>
+        <option>Working outside scope of work</option><option>Improper lifting technique</option>
+        <option>Material / equipment failure</option><option>Other trade interaction</option><option>Other</option>
+      </select></div>
+    <div class="form-group"><label class="form-label">Incident notes / description</label>
+      <textarea class="form-textarea" id="f_notes" placeholder="Brief description of incident, corrective actions..."></textarea></div>
+
+    <button class="submit-btn" onclick="submitIncident()">Save incident</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="ti ti-check"></i> <span id="toastMsg">Incident logged successfully</span></div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="importModalOverlay">
+  <div class="import-modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="ti ti-upload" style="margin-right:6px;color:var(--teal)"></i>Import / Restore Data</div>
+      <button class="close-btn" onclick="closeImportModal()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="import-step">
+      <div class="import-num">1</div>
+      <div class="import-step-text"><strong>Export from your other device first</strong>Click the Export button on the device that has your data. This saves a <code style="background:var(--bg3);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:11px;">.json</code> backup file with all incidents, drills, and initiative entries across all years.</div>
+    </div>
+    <div class="import-step">
+      <div class="import-num">2</div>
+      <div class="import-step-text"><strong>Transfer the file to this device</strong>AirDrop, iCloud Drive, email it to yourself, or save to Files app — any method works.</div>
+    </div>
+    <div class="import-step">
+      <div class="import-num">3</div>
+      <div class="import-step-text"><strong>Choose how to import</strong></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin:4px 0 16px;">
+      <label class="import-merge-opt">
+        <input type="radio" name="importMode" value="merge" checked>
+        <div><div class="import-merge-label">Merge — add new records only</div><div class="import-merge-sub">Keeps existing data, adds anything not already here</div></div>
+      </label>
+      <label class="import-merge-opt">
+        <input type="radio" name="importMode" value="replace">
+        <div><div class="import-merge-label">Replace — overwrite all data</div><div class="import-merge-sub">Replaces everything with the imported file</div></div>
+      </label>
+    </div>
+
+    <div class="import-drop" id="importDrop" onclick="document.getElementById('importFileInput').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleImportDrop(event)">
+      <i class="ti ti-file-import"></i>
+      <div class="import-drop-text">Tap to choose file</div>
+      <div class="import-drop-sub">Accepts .json backup or .csv export</div>
+    </div>
+
+    <div class="import-status" id="importStatus"></div>
+
+    <div class="import-actions">
+      <button class="submit-btn" style="background:var(--teal)" onclick="triggerImport()"><i class="ti ti-upload" style="font-size:13px;margin-right:6px"></i>Import File</button>
+      <button class="btn" style="flex:0;padding:10px 16px;" onclick="closeImportModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PASSWORD LOCK SCREEN
+═══════════════════════════════════════════════════════════════════════ -->
+
+<script>
+// ════════════════════════════════════════════════════════════════════════
+// SAFETY DASHBOARD — UNIFIED SCRIPT (single block, no split-block errors)
+// ════════════════════════════════════════════════════════════════════════
+
+// ── CONSTANTS ────────────────────────────────────────────────────────────────
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+const FIELD_LEVELS=['Apprentice (1st yr)','Apprentice (2nd yr)','Apprentice (3rd yr)','Apprentice (4th yr)','Journeyman','Foreman','Installer','Stockman (field)','Other field'];
+const OFFICE_LEVELS=['Administration','Project Manager (PM)','Project Executive (PE)','Project Coordinator (PX)','Human Resources (HR)','Accounting','Other office'];
+const WAREHOUSE_LEVELS=['Stockman','Administration','Manager','Production','Delivery Driver','Other warehouse'];
+const LEVEL_GROUPS={field:FIELD_LEVELS,office:OFFICE_LEVELS,warehouse:WAREHOUSE_LEVELS};
+
+const INIT_CATS=['Increase Emergency Preparedness','Increase Near Miss Reporting','Increase Employee Engagement in Safety Programs','Increase Project Team Safety Consistency','Increase Understanding with Root Cause Analysis'];
+const INIT_ICONS=['ti-first-aid-kit','ti-alert-octagon','ti-users','ti-clipboard-check','ti-zoom-check'];
+const INIT_COLORS=['#4a8fe8','#a855f7','#2ab89a','#d4a843','#e85c2c'];
+
+const CLASS_COLORS={Recordable:'#e24b4a','First Aid':'#2ab89a','Near Miss':'#a855f7','Property Damage':'#d4a843'};
+const INJURY_COLORS=['#e85c2c','#4a8fe8','#2ab89a','#d4a843','#a855f7','#e24b4a','#f07a50','#9ca3af','#60a5fa','#34d399','#fb923c','#c084fc'];
+
+const DRILL_AREAS={office:['Floor 1','Floor 2','Floor 3','Floor 4','All Floors'],warehouse:['Office Area','Warehouse Floor','Both Areas']};
+const DRILL_TYPES=['Fire','Earthquake','Medical Response'];
+const DRILL_COLORS={'Fire':'#e85c2c','Earthquake':'#d4a843','Medical Response':'#4a8fe8'};
+const RESULT_COLORS={Pass:'#2ab89a','Pass with notes':'#4a8fe8','Needs improvement':'#d4a843',Fail:'#e24b4a'};
+
+
+// ── STORAGE HELPERS ──────────────────────────────────────────────────────────
+var _ls = {
+  get:    function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set:    function(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },
+  remove: function(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+
+// ── SUPABASE SYNC ─────────────────────────────────────────────────────────────
+var SB_URL = 'https://bcjalazareaspzivplbz.supabase.co';
+var SB_KEY = 'sb_publishable_cNfzkM0UZtJudntkNzqh7w_kdpyqtIA';
+var SB_ONLINE = false; // set true once first sync succeeds
+
+function sbHeaders(extra) {
+  var h = {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  };
+  if (extra) Object.assign(h, extra);
+  return h;
+}
+
+// Generic fetch wrapper — falls back silently to localStorage if offline
+function sbFetch(path, options) {
+  return fetch(SB_URL + '/rest/v1/' + path, Object.assign({headers: sbHeaders()}, options || {}))
+    .then(function(r) {
+      if (!r.ok) return r.text().then(function(t){ throw new Error('SB ' + r.status + ': ' + t); });
+      return r.json();
+    });
+}
+
+// ── SYNC STATUS INDICATOR ─────────────────────────────────────────────────────
+function setSyncStatus(state) {
+  var el = document.getElementById('syncStatus');
+  if (!el) return;
+  if (state === 'ok')      { el.innerHTML = '<i class="ti ti-cloud-check" style="color:var(--teal)"></i>'; el.title = 'Synced to cloud'; }
+  else if (state === 'syncing') { el.innerHTML = '<i class="ti ti-loader-2 ti-spin" style="color:var(--gold)"></i>'; el.title = 'Syncing…'; }
+  else if (state === 'offline') { el.innerHTML = '<i class="ti ti-cloud-off" style="color:var(--text3)"></i>'; el.title = 'Offline — using local data'; }
+  else if (state === 'error')   { el.innerHTML = '<i class="ti ti-cloud-x" style="color:var(--red)"></i>'; el.title = 'Sync error — check connection'; }
+}
+
+// ── LOAD ALL DATA FROM SUPABASE ───────────────────────────────────────────────
+function sbLoadAll() {
+  setSyncStatus('syncing');
+  var promises = [
+    sbFetch('incidents?order=date.asc&limit=5000'),
+    sbFetch('initiatives?order=date.asc&limit=5000'),
+    sbFetch('drills?order=date.asc&limit=5000')
+  ];
+  return Promise.all(promises).then(function(results) {
+    var incidents  = results[0];
+    var initiatives = results[1];
+    var drills     = results[2];
+
+    // Rebuild DATA object keyed by year
+    var newData = {};
+    incidents.forEach(function(r) {
+      var y = parseInt((r.date||'').split('-')[0]);
+      if (!y || isNaN(y)) return;
+      if (!newData[y]) newData[y] = [];
+      // Map DB columns back to dashboard format
+      newData[y].push({
+        date: r.date, month: r.month||0, dow: r.dow||'',
+        injury: r.injury||'', classification: r.classification||'Recordable',
+        level: r.level||'', group: r.worker_group||'field',
+        time: r.time_window||'morning', timeRaw: r.time_raw||'',
+        ppe: r.ppe||'', cause: r.cause||'', swa: r.swa||'N/A',
+        notes: r.notes||'', daysAway: r.days_away||0,
+        daysRestricted: r.days_restricted||0, id: r.id
+      });
+    });
+
+    var newInit = {};
+    initiatives.forEach(function(r) {
+      var y = parseInt((r.date||'').split('-')[0]);
+      if (!y || isNaN(y)) return;
+      if (!newInit[y]) newInit[y] = [];
+      newInit[y].push({ cat: r.category||'', date: r.date||'', desc: r.description||'', id: r.id });
+    });
+
+    var newDrills = {};
+    drills.forEach(function(r) {
+      var y = parseInt((r.date||'').split('-')[0]);
+      if (!y || isNaN(y)) return;
+      if (!newDrills[y]) newDrills[y] = [];
+      newDrills[y].push({
+        date: r.date, month: r.month||0, type: r.drill_type||'',
+        facility: r.facility||'', area: r.area||'',
+        start: r.start_time||'', end: r.end_time||'',
+        duration: r.duration_mins||null, result: r.result||'',
+        conductor: r.conductor||'', notes: r.notes||'', id: r.id
+      });
+    });
+
+    DATA      = Object.keys(newData).length  ? newData  : DATA;
+    INIT_DATA = Object.keys(newInit).length  ? newInit  : INIT_DATA;
+    DRILL_DATA= Object.keys(newDrills).length? newDrills: DRILL_DATA;
+
+    // Also cache locally as backup
+    _ls.set(STORAGE_KEY,   JSON.stringify(DATA));
+    _ls.set(STORAGE_INIT,  JSON.stringify(INIT_DATA));
+    _ls.set(STORAGE_DRILLS,JSON.stringify(DRILL_DATA));
+
+    SB_ONLINE = true;
+    setSyncStatus('ok');
+    allYears = [...new Set([
+      ...Object.keys(DATA).map(Number),
+      ...Object.keys(INIT_DATA).map(Number),
+      ...Object.keys(DRILL_DATA).map(Number)
+    ])].filter(function(y){ return y > 2000; }).sort();
+    buildYearTabs();
+    renderAll();
+    console.log('ArcSafe: synced from Supabase —', incidents.length, 'incidents,', drills.length, 'drills,', initiatives.length, 'initiatives');
+  }).catch(function(err) {
+    console.warn('ArcSafe: Supabase unavailable, using local data.', err.message);
+    SB_ONLINE = false;
+    setSyncStatus('offline');
+  });
+}
+
+// ── SAVE INCIDENT TO SUPABASE ─────────────────────────────────────────────────
+function sbSaveIncident(rec) {
+  if (!SB_ONLINE) return Promise.resolve(null);
+  var row = {
+    date: rec.date, month: rec.month, dow: rec.dow,
+    injury: rec.injury, classification: rec.classification,
+    level: rec.level, worker_group: rec.group,
+    time_window: rec.time, time_raw: rec.timeRaw||'',
+    ppe: rec.ppe, cause: rec.cause, swa: rec.swa||'N/A',
+    notes: rec.notes||'', days_away: rec.daysAway||0,
+    days_restricted: rec.daysRestricted||0
+  };
+  return sbFetch('incidents', {
+    method: 'POST',
+    headers: sbHeaders({'Prefer':'return=representation'}),
+    body: JSON.stringify(row)
+  }).then(function(r) {
+    if (r && r[0]) rec.id = r[0].id;
+    setSyncStatus('ok');
+    return r;
+  }).catch(function(e){ setSyncStatus('error'); console.error('sbSaveIncident:', e); });
+}
+
+// ── DELETE INCIDENT FROM SUPABASE ─────────────────────────────────────────────
+function sbDeleteIncident(id) {
+  if (!SB_ONLINE || !id) return Promise.resolve();
+  return sbFetch('incidents?id=eq.' + id, { method: 'DELETE', headers: sbHeaders({'Prefer':'return=minimal'}) })
+    .catch(function(e){ console.error('sbDeleteIncident:', e); });
+}
+
+// ── SAVE INITIATIVE TO SUPABASE ───────────────────────────────────────────────
+function sbSaveInitiative(rec) {
+  if (!SB_ONLINE) return Promise.resolve(null);
+  return sbFetch('initiatives', {
+    method: 'POST',
+    headers: sbHeaders({'Prefer':'return=representation'}),
+    body: JSON.stringify({ category: rec.cat, date: rec.date, description: rec.desc||'' })
+  }).then(function(r) {
+    if (r && r[0]) rec.id = r[0].id;
+    setSyncStatus('ok');
+  }).catch(function(e){ setSyncStatus('error'); console.error('sbSaveInitiative:', e); });
+}
+
+// ── DELETE INITIATIVE FROM SUPABASE ──────────────────────────────────────────
+function sbDeleteInitiative(id) {
+  if (!SB_ONLINE || !id) return Promise.resolve();
+  return sbFetch('initiatives?id=eq.' + id, { method: 'DELETE', headers: sbHeaders({'Prefer':'return=minimal'}) })
+    .catch(function(e){ console.error('sbDeleteInitiative:', e); });
+}
+
+// ── SAVE DRILL TO SUPABASE ────────────────────────────────────────────────────
+function sbSaveDrill(rec) {
+  if (!SB_ONLINE) return Promise.resolve(null);
+  var row = {
+    date: rec.date, month: rec.month, drill_type: rec.type,
+    facility: rec.facility, area: rec.area,
+    start_time: rec.start||null, end_time: rec.end||null,
+    duration_mins: rec.duration||null, result: rec.result,
+    conductor: rec.conductor||'', notes: rec.notes||''
+  };
+  return sbFetch('drills', {
+    method: 'POST',
+    headers: sbHeaders({'Prefer':'return=representation'}),
+    body: JSON.stringify(row)
+  }).then(function(r) {
+    if (r && r[0]) rec.id = r[0].id;
+    setSyncStatus('ok');
+  }).catch(function(e){ setSyncStatus('error'); console.error('sbSaveDrill:', e); });
+}
+
+// ── DELETE DRILL FROM SUPABASE ────────────────────────────────────────────────
+function sbDeleteDrill(id) {
+  if (!SB_ONLINE || !id) return Promise.resolve();
+  return sbFetch('drills?id=eq.' + id, { method: 'DELETE', headers: sbHeaders({'Prefer':'return=minimal'}) })
+    .catch(function(e){ console.error('sbDeleteDrill:', e); });
+}
+
+
+// ── DATA STORAGE ─────────────────────────────────────────────────────────────
+const STORAGE_KEY='safety_v2_incidents';
+const STORAGE_INIT='safety_v2_initiatives';
+const STORAGE_DRILLS='safety_v2_drills';
+
+const REAL_DATA={
+2025:[
+  {date:'2025-01-02',month:0,dow:'Friday',injury:'Foreign Body (Eye)',classification:'Recordable',level:'Apprentice (other)',group:'field',time:'morning',timeRaw:'9:00am',ppe:'Yes — partial (eyewear issue)',cause:'Inadequate hazard recognition',swa:'N/A',notes:'Cutting drywall and dust went into eye under safety glasses',daysAway:0,daysRestricted:0},
+  {date:'2025-01-15',month:0,dow:'Wednesday',injury:'Cut / Laceration',classification:'Recordable',level:'Journeyman',group:'field',time:'afternoon',timeRaw:'1:30pm',ppe:'Yes — complete',cause:'Improper tool use',swa:'N/A',notes:'Pulling MC and end went through glove and cut finger in cuticle area',daysAway:0,daysRestricted:0},
+  {date:'2025-01-21',month:0,dow:'Tuesday',injury:'Concussion',classification:'Recordable',level:'Apprentice (1st yr)',group:'field',time:'afternoon',timeRaw:'1:20pm',ppe:'Yes — complete',cause:'Working outside scope of work',swa:'No — should have been used',notes:'Fell off ladder when it broke and hit head. Used another trades ladder and did not inspect. Did not follow company policy',daysAway:1,daysRestricted:0},
+  {date:'2025-01-30',month:0,dow:'Friday',injury:'Foreign Body (Eye)',classification:'First Aid',level:'Apprentice (2nd yr)',group:'field',time:'postlunch',timeRaw:'12:45pm',ppe:'Yes — complete',cause:'Material / equipment failure',swa:'N/A',notes:'Material failure — foreign body in eye',daysAway:0,daysRestricted:0},
+  {date:'2025-02-10',month:1,dow:'Monday',injury:'Electrical Shock',classification:'Recordable',level:'Journeyman',group:'field',time:'morning',timeRaw:'8:50am',ppe:'Yes — complete',cause:'MOP / Stop Work violation',swa:'N/A',notes:'Did not test tester prior to testing equipment',daysAway:0,daysRestricted:0},
+  {date:'2025-02-19',month:1,dow:'Wednesday',injury:'Contusion / Bruise',classification:'First Aid',level:'Stockman (field)',group:'warehouse',time:'morning',timeRaw:'9:40am',ppe:'Yes — complete',cause:'Rushing / complacency',swa:'N/A',notes:'Hit finger on conduit while transporting, rushing',daysAway:0,daysRestricted:0},
+  {date:'2025-04-03',month:3,dow:'Thursday',injury:'Cut / Laceration',classification:'Recordable',level:'Apprentice (4th yr)',group:'field',time:'postlunch',timeRaw:'12:30pm',ppe:'No',cause:'Rushing / complacency',swa:'N/A',notes:'Rushing through jobsite and hit head on overhead cabinet — hard hat not being worn',daysAway:0,daysRestricted:0},
+  {date:'2025-04-10',month:3,dow:'Thursday',injury:'Strain / Sprain',classification:'Recordable',level:'Apprentice (2nd yr)',group:'field',time:'morning',timeRaw:'8:10am',ppe:'Yes — complete',cause:'Improper lifting technique',swa:'N/A',notes:'Improper lifting technique, lack of training',daysAway:0,daysRestricted:0},
+  {date:'2025-04-18',month:3,dow:'Friday',injury:'Irritation / Respiratory',classification:'First Aid',level:'Apprentice (other)',group:'field',time:'midday',timeRaw:'11:00am',ppe:'Yes — partial (other)',cause:'Inadequate hazard recognition',swa:'No — should have been used',notes:'Lung irritation and cough in dusty area, did not use Stop Work Authority. Did not use voluntary mask',daysAway:0,daysRestricted:0},
+  {date:'2025-05-03',month:4,dow:'Saturday',injury:'Electrical Shock',classification:'Recordable',level:'Journeyman',group:'field',time:'morning',timeRaw:'8:38am',ppe:'Yes — complete',cause:'Lack of situational awareness',swa:'N/A',notes:'Fingers touched leads of voltage meter while inserting into Waggo, lack of awareness of hand placement on tool',daysAway:0,daysRestricted:0},
+  {date:'2025-05-08',month:4,dow:'Thursday',injury:'Strain / Sprain',classification:'First Aid',level:'Stockman (field)',group:'warehouse',time:'morning',timeRaw:'8:30am',ppe:'Yes — complete',cause:'Improper lifting technique',swa:'N/A',notes:'Not using proper lifting techniques while moving conduit. Complacency and rushing',daysAway:0,daysRestricted:0},
+  {date:'2025-05-15',month:4,dow:'Thursday',injury:'Strain / Sprain',classification:'First Aid',level:'Delivery Driver',group:'warehouse',time:'midday',timeRaw:'10:30am',ppe:'Yes — complete',cause:'Improper lifting technique',swa:'N/A',notes:'Not using proper lifting techniques while moving ladders, complacency',daysAway:0,daysRestricted:0},
+  {date:'2025-05-16',month:4,dow:'Friday',injury:'Contusion / Bruise',classification:'Recordable',level:'Journeyman',group:'field',time:'midday',timeRaw:'10:15am',ppe:'Yes — complete',cause:'Other trade interaction',swa:'N/A',notes:'Strut rack installed by others fell on employee',daysAway:0,daysRestricted:0},
+  {date:'2025-06-23',month:5,dow:'Monday',injury:'Flash Burn',classification:'Recordable',level:'Journeyman',group:'field',time:'morning',timeRaw:'8:30am',ppe:'Yes — complete',cause:'MOP / Stop Work violation',swa:'N/A',notes:'Burn from arc blast, did not test before touch, FM did not follow MOP process',daysAway:1,daysRestricted:0},
+  {date:'2025-06-23',month:5,dow:'Monday',injury:'Thermal Burn',classification:'Recordable',level:'Stockman (field)',group:'field',time:'morning',timeRaw:'8:30am',ppe:'Yes — complete',cause:'MOP / Stop Work violation',swa:'N/A',notes:'In room where arc blast occurred',daysAway:0,daysRestricted:1},
+  {date:'2025-06-30',month:5,dow:'Monday',injury:'Cut / Laceration',classification:'Recordable',level:'Foreman',group:'field',time:'postlunch',timeRaw:'1:20pm',ppe:'Yes — complete',cause:'Inadequate hazard recognition',swa:'N/A',notes:'Tripped on other trades materials while getting off a ladder and cut elbow',daysAway:0,daysRestricted:0},
+  {date:'2025-07-16',month:6,dow:'Wednesday',injury:'Cut / Laceration',classification:'Recordable',level:'Installer',group:'field',time:'midday',timeRaw:'10:11am',ppe:'No',cause:'PPE failure',swa:'N/A',notes:'Arm cut on all thread while reaching — needed Kevlar sleeves',daysAway:0,daysRestricted:0},
+  {date:'2025-07-24',month:6,dow:'Thursday',injury:'Cut / Laceration',classification:'First Aid',level:'Apprentice (other)',group:'field',time:'morning',timeRaw:'7:00am',ppe:'Yes — complete',cause:'Lack of training',swa:'N/A',notes:'Drill bit broke and cut finger through glove',daysAway:0,daysRestricted:0},
+  {date:'2025-08-05',month:7,dow:'Tuesday',injury:'Strain / Sprain',classification:'Recordable',level:'Journeyman',group:'field',time:'morning',timeRaw:'7:30am',ppe:'Yes — complete',cause:'Lack of situational awareness',swa:'N/A',notes:'Stepped off ladder wrong, lack of situational awareness, complacency',daysAway:0,daysRestricted:1},
+  {date:'2025-08-13',month:7,dow:'Wednesday',injury:'Strain / Sprain',classification:'Recordable',level:'Apprentice (1st yr)',group:'field',time:'midday',timeRaw:'10:00am',ppe:'Yes — complete',cause:'Poor ergonomics / body positioning',swa:'N/A',notes:'Wrist sprain while roto hammering. Repetitive task and poor body positioning, lack of training',daysAway:0,daysRestricted:1},
+  {date:'2025-09-08',month:8,dow:'Monday',injury:'Foreign Body (Eye)',classification:'Recordable',level:'Apprentice (1st yr)',group:'field',time:'morning',timeRaw:'7:30am',ppe:'No',cause:'Lack of training',swa:'N/A',notes:'Concrete in eye. PTP did not indicate goggles needed while drilling overhead',daysAway:0,daysRestricted:0},
+  {date:'2025-09-15',month:8,dow:'Monday',injury:'Cut / Laceration',classification:'Recordable',level:'Journeyman',group:'field',time:'morning',timeRaw:'7:06am',ppe:'No',cause:'PPE failure',swa:'N/A',notes:'Cut arm on sharp duct while pulling MC — no Kevlar sleeves',daysAway:0,daysRestricted:0},
+  {date:'2025-09-30',month:8,dow:'Tuesday',injury:'Cut / Laceration',classification:'Recordable',level:'Journeyman',group:'field',time:'morning',timeRaw:'8:20am',ppe:'Yes — complete',cause:'Improper tool use',swa:'N/A',notes:'Cut while stripping wire using razor knife, not using proper tool for the job',daysAway:0,daysRestricted:0},
+  {date:'2025-10-20',month:9,dow:'Monday',injury:'Foreign Body (Eye)',classification:'First Aid',level:'Apprentice (other)',group:'field',time:'morning',timeRaw:'9:00am',ppe:'Yes — partial (eyewear issue)',cause:'Lack of training',swa:'N/A',notes:'Lack of training while doffing PPE',daysAway:0,daysRestricted:0},
+  {date:'2025-11-13',month:10,dow:'Thursday',injury:'Chemical Exposure',classification:'Recordable',level:'Apprentice (3rd yr)',group:'field',time:'postlunch',timeRaw:'1:51pm',ppe:'No',cause:'Lack of training',swa:'No — should have been used',notes:'Drilled into coil of charged heat pump. Lack of planning and training',daysAway:0,daysRestricted:1},
+  {date:'2025-12-01',month:11,dow:'Monday',injury:'Concussion',classification:'Recordable',level:'Apprentice (1st yr)',group:'field',time:'morning',timeRaw:'9:45am',ppe:'Yes — complete',cause:'Working outside scope of work',swa:'No — should have been used',notes:'Assisted another trade, working outside scope of work',daysAway:1,daysRestricted:0},
+  {date:'2025-12-09',month:11,dow:'Tuesday',injury:'Cut / Laceration',classification:'Recordable',level:'Apprentice (3rd yr)',group:'field',time:'midday',timeRaw:'10:40am',ppe:'Yes — complete',cause:'Rushing / complacency',swa:'N/A',notes:'Not using proper technique, working too quickly; mechanical stripper could have been used',daysAway:0,daysRestricted:0},
+  {date:'2025-12-31',month:11,dow:'Wednesday',injury:'Foreign Body (Eye)',classification:'First Aid',level:'Apprentice (3rd yr)',group:'field',time:'midday',timeRaw:'10:00am',ppe:'Yes — partial (eyewear issue)',cause:'Lack of training',swa:'N/A',notes:'Lack of training while doffing PPE',daysAway:0,daysRestricted:0},
+],
+2026:[
+  {date:'2026-03-26',month:2,dow:'Thursday',injury:'Contusion / Bruise',classification:'First Aid',level:'Journeyman',group:'field',time:'morning',timeRaw:'7:32am',ppe:'Yes — complete',cause:'Poor ergonomics / body positioning',swa:'N/A',notes:'Glove caught on Roto hammer bit causing hand to hit wood stud',daysAway:0,daysRestricted:0},
+  {date:'2026-03-30',month:2,dow:'Monday',injury:'Cut / Laceration',classification:'Recordable',level:'Journeyman',group:'field',time:'postlunch',timeRaw:'1:00pm',ppe:'No',cause:'PPE failure',swa:'N/A',notes:'While taking ladder down arm brushed against sharp metal stud — Kevlar sleeves should have been worn',daysAway:0,daysRestricted:0},
+  {date:'2026-04-08',month:3,dow:'Wednesday',injury:'Strain / Sprain',classification:'Recordable',level:'Foreman',group:'field',time:'postlunch',timeRaw:'12:24pm',ppe:'Yes — complete',cause:'Failure to use mechanical aid',swa:'No — should have been used',notes:'Pulling too hard for too long on wires, mechanical means needed',daysAway:0,daysRestricted:1},
+  {date:'2026-04-17',month:3,dow:'Friday',injury:'Cut / Laceration',classification:'Recordable',level:'Foreman',group:'field',time:'morning',timeRaw:'9:50am',ppe:'Yes — complete',cause:'Improper tool use',swa:'N/A',notes:'Cut finger with porta band while cutting all thread in the air. Poor body positioning, should have used a rod cutter',daysAway:0,daysRestricted:0},
+  {date:'2026-04-22',month:3,dow:'Wednesday',injury:'Strain / Sprain',classification:'Recordable',level:'Journeyman',group:'field',time:'postlunch',timeRaw:'1:00pm',ppe:'Yes — complete',cause:'MOP / Stop Work violation',swa:'No — should have been used',notes:'Bending pipe too long; stop work authority needed to redesign task/route or ask for help',daysAway:0,daysRestricted:1},
+]};
+
+function loadData(){try{const r=_ls.get(STORAGE_KEY);if(r)return JSON.parse(r);}catch(e){}return JSON.parse(JSON.stringify(REAL_DATA));}
+function saveData(){try{_ls.set(STORAGE_KEY,JSON.stringify(DATA));}catch(e){}}
+function loadInitData(){try{const r=_ls.get(STORAGE_INIT);if(r)return JSON.parse(r);}catch(e){}return {};}
+function saveInitData(){try{_ls.set(STORAGE_INIT,JSON.stringify(INIT_DATA));}catch(e){}}
+function loadDrills(){try{const r=_ls.get(STORAGE_DRILLS);if(r)return JSON.parse(r);}catch(e){}return {};}
+function saveDrills(){try{_ls.set(STORAGE_DRILLS,JSON.stringify(DRILL_DATA));}catch(e){}}
+
+let DATA=loadData();
+let INIT_DATA=loadInitData();
+let DRILL_DATA=loadDrills();
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let allYears=[...new Set([...Object.keys(DATA).map(Number),...Object.keys(INIT_DATA).map(Number),...Object.keys(DRILL_DATA).map(Number),2025,2026])].sort();
+let activeYear=2026;
+let activeMonthFilter=null;
+let classFilter='all';
+let charts={};
+
+function getYearData(y){return DATA[y]||[];}
+function getFilteredData(){
+  let r=getYearData(activeYear);
+  if(activeMonthFilter!==null)r=r.filter(x=>x.month===activeMonthFilter);
+  return r;
+}
+function getClassFilteredData(){
+  let r=getFilteredData();
+  if(classFilter!=='all')r=r.filter(x=>x.classification===classFilter);
+  return r;
+}
+function workerGroup(r){
+  if(r.group)return r.group;
+  const l=(r.level||'').toLowerCase();
+  if(l.includes('admin')||l.includes('pm')||l.includes('pe')||l.includes('px')||l.includes('hr')||l.includes('accounting'))return'office';
+  if(l.includes('stockman')||l.includes('driver')||l.includes('production'))return'warehouse';
+  return'field';
+}
+function isApprentice(r){return(r.level||'').toLowerCase().includes('apprentice');}
+function isJW(r){return(r.level||'').toLowerCase().includes('journeyman');}
+function isForeman(r){return(r.level||'').toLowerCase().includes('foreman');}
+
+// ── YEAR TABS ─────────────────────────────────────────────────────────────────
+function buildYearTabs(){
+  const c=document.getElementById('yearSelector');
+  if(!c)return;
+  c.innerHTML='';
+  allYears.forEach(y=>{
+    const b=document.createElement('button');
+    b.className='year-tab'+(y===activeYear?' active':'');
+    b.textContent=y;
+    b.onclick=()=>{activeYear=y;activeMonthFilter=null;buildYearTabs();renderAll();};
+    c.appendChild(b);
+  });
+}
+
+// ── PAGE SWITCHING ─────────────────────────────────────────────────────────────
+function switchPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t=>t.classList.remove('active'));
+  const pg=document.getElementById('page-'+id);
+  if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
+  setTimeout(renderAll,80);
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function openModal(){
+  const d=new Date();
+  const ds=d.toISOString().split('T')[0];
+  document.getElementById('f_date').value=ds;
+  document.getElementById('init_date').value=ds;
+  updateLevelOptions();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+
+function updateLevelOptions(){
+  const g=document.getElementById('f_group');
+  const s=document.getElementById('f_level');
+  if(!g||!s)return;
+  s.innerHTML=(LEVEL_GROUPS[g.value]||FIELD_LEVELS).map(l=>`<option>${l}</option>`).join('');
+}
+function updateDrillAreas(){
+  const f=document.getElementById('d_facility');
+  const s=document.getElementById('d_area');
+  if(!f||!s)return;
+  s.innerHTML=(DRILL_AREAS[f.value]||[]).map(a=>`<option>${a}</option>`).join('');
+}
+
+function submitIncident(){
+  const dv=document.getElementById('f_date').value;
+  if(!dv){alert('Please select a date.');return;}
+  const yr=parseInt(dv.split('-')[0]);
+  const mo=new Date(dv+'T12:00:00').getMonth();
+  const rec={
+    date:dv,month:mo,
+    dow:document.getElementById('f_dow').value,
+    injury:document.getElementById('f_injury').value,
+    classification:document.getElementById('f_class').value,
+    level:document.getElementById('f_level').value,
+    group:document.getElementById('f_group').value,
+    time:document.getElementById('f_time').value,
+    timeRaw:document.getElementById('f_time_raw').value,
+    ppe:document.getElementById('f_ppe').value,
+    cause:document.getElementById('f_cause').value,
+    swa:document.getElementById('f_swa').value,
+    notes:document.getElementById('f_notes').value,
+    daysAway:parseInt(document.getElementById('f_days_away').value)||0,
+    daysRestricted:parseInt(document.getElementById('f_days_restricted').value)||0,
+  };
+  if(!DATA[yr]){DATA[yr]=[];}
+  DATA[yr].push(rec);
+  if(!allYears.includes(yr)){allYears.push(yr);allYears.sort();}
+  saveData();
+  setSyncStatus('syncing');
+  sbSaveIncident(rec).then(function(){ saveData(); });
+  closeModal();activeYear=yr;buildYearTabs();renderAll();
+  showToast('Incident logged');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  const m=document.getElementById('toastMsg');
+  if(!t||!m)return;
+  m.textContent=msg||'Done';
+  t.style.borderColor=type==='warn'?'var(--gold)':'var(--teal)';
+  t.style.color=type==='warn'?'var(--gold)':'var(--teal)';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ── EXPORT & IMPORT ──────────────────────────────────────────────────────────
+function exportAll(){
+  // Full JSON backup — all years, all data types
+  const backup={
+    version:2,
+    exportDate:new Date().toISOString(),
+    exportDevice:navigator.userAgent,
+    incidents:DATA,
+    initiatives:INIT_DATA,
+    drills:DRILL_DATA
+  };
+  const json=JSON.stringify(backup,null,2);
+  const date=new Date().toISOString().split('T')[0];
+  const filename='safety_backup_'+date+'.json';
+  // iOS Safari compatible download
+  try{
+    const blob=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=filename;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},500);
+  }catch(e){
+    // Fallback for older Safari
+    const a=document.createElement('a');
+    a.href='data:application/json;charset=utf-8,'+encodeURIComponent(json);
+    a.download=filename;document.body.appendChild(a);a.click();
+    setTimeout(()=>document.body.removeChild(a),500);
+  }
+  showToast('Backup saved: '+filename);
+}
+
+function exportCSV(){
+  // CSV export for current year (kept for OSHA/spreadsheet use)
+  const rows=getYearData(activeYear);
+  if(!rows.length){showToast('No data for '+activeYear,'warn');return;}
+  const hdr=['Date','Month','Day','Injury','Classification','Level','Group','Time','PPE','SWA','Cause','DaysAway','DaysRestricted','Notes'];
+  const csv=[hdr.join(','),...rows.map(r=>[r.date,MONTHS[r.month]||'',r.dow,r.injury,r.classification,r.level,r.group,r.timeRaw||r.time,r.ppe,r.swa,r.cause,r.daysAway||0,r.daysRestricted||0,(r.notes||'').replace(/,/g,';')].join(','))].join('\n');
+  try{
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download='safety_incidents_'+activeYear+'.csv';
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},500);
+  }catch(e){
+    const a=document.createElement('a');
+    a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+    a.download='safety_incidents_'+activeYear+'.csv';
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>document.body.removeChild(a),500);
+  }
+}
+
+function printOSHA(){window.print();}
+
+// ── IMPORT ────────────────────────────────────────────────────────────────────
+let _pendingImportData = null;
+
+function openImportModal(){
+  _pendingImportData=null;
+  document.getElementById('importStatus').textContent='';
+  document.getElementById('importStatus').style.color='var(--text2)';
+  document.getElementById('importDrop').querySelector('.import-drop-text').textContent='Tap to choose file';
+  document.getElementById('importModalOverlay').classList.add('open');
+}
+function closeImportModal(){
+  document.getElementById('importModalOverlay').classList.remove('open');
+  _pendingImportData=null;
+}
+
+function handleImportFile(evt){
+  const file=evt.target.files[0];
+  if(file)parseImportFile(file);
+  evt.target.value=''; // reset so same file can be re-selected
+}
+function handleImportDrop(evt){
+  evt.preventDefault();
+  document.getElementById('importDrop').classList.remove('dragover');
+  const file=evt.dataTransfer.files[0];
+  if(file)parseImportFile(file);
+}
+
+function parseImportFile(file){
+  const status=document.getElementById('importStatus');
+  const dropText=document.getElementById('importDrop').querySelector('.import-drop-text');
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const text=e.target.result;
+      if(file.name.endsWith('.csv')){
+        _pendingImportData=parseCSVImport(text);
+        status.style.color='var(--teal)';
+        status.textContent='✓ CSV parsed: '+_pendingImportData.incidentCount+' incidents found for import';
+      } else {
+        const parsed=JSON.parse(text);
+        if(!parsed.incidents){throw new Error('Not a valid ArcSafe backup file');}
+        _pendingImportData=parsed;
+        const totalInc=Object.values(parsed.incidents||{}).reduce((a,b)=>a+b.length,0);
+        const totalDrills=Object.values(parsed.drills||{}).reduce((a,b)=>a+b.length,0);
+        const totalInit=Object.values(parsed.initiatives||{}).reduce((a,b)=>a+b.length,0);
+        status.style.color='var(--teal)';
+        status.textContent='✓ Backup from '+( parsed.exportDate?parsed.exportDate.split('T')[0]:'unknown date')+' — '+totalInc+' incidents, '+totalDrills+' drills, '+totalInit+' initiative entries';
+      }
+      dropText.textContent=file.name;
+    }catch(err){
+      _pendingImportData=null;
+      status.style.color='var(--red)';
+      status.textContent='✗ Error reading file: '+err.message;
+      dropText.textContent='Tap to choose file';
+    }
+  };
+  reader.readAsText(file);
+}
+
+function parseCSVImport(text){
+  const lines=text.trim().split('\n');
+  const headers=lines[0].split(',').map(h=>h.trim().toLowerCase());
+  const rows=[];
+  for(let i=1;i<lines.length;i++){
+    if(!lines[i].trim())continue;
+    const cols=lines[i].split(',');
+    const r={};
+    headers.forEach((h,idx)=>{r[h]=cols[idx]||'';});
+    const date=r['date']||'';
+    if(!date)continue;
+    const mo=new Date(date+'T12:00:00').getMonth();
+    rows.push({
+      date,month:isNaN(mo)?0:mo,
+      dow:r['day']||'',
+      injury:r['injury']||'',
+      classification:r['classification']||'Recordable',
+      level:r['level']||'',
+      group:r['group']||'field',
+      time:r['time']||'morning',
+      timeRaw:r['time']||'',
+      ppe:r['ppe']||'',
+      swa:r['swa']||'N/A',
+      cause:r['cause']||'',
+      notes:r['notes']||'',
+      daysAway:parseInt(r['daysaway'])||0,
+      daysRestricted:parseInt(r['daysrestricted'])||0,
+    });
+  }
+  const byYear={};
+  rows.forEach(r=>{
+    const y=parseInt(r.date.split('-')[0]);
+    if(!byYear[y])byYear[y]=[];
+    byYear[y].push(r);
+  });
+  return{incidents:byYear,drills:{},initiatives:{},incidentCount:rows.length};
+}
+
+function triggerImport(){
+  if(!_pendingImportData){
+    document.getElementById('importStatus').style.color='var(--gold)';
+    document.getElementById('importStatus').textContent='Please select a file first.';
+    document.getElementById('importFileInput').click();
+    return;
+  }
+  const mode=document.querySelector('input[name="importMode"]:checked').value;
+  const status=document.getElementById('importStatus');
+  try{
+    if(mode==='replace'){
+      // Full replace
+      if(_pendingImportData.incidents)DATA=_pendingImportData.incidents;
+      if(_pendingImportData.initiatives)INIT_DATA=_pendingImportData.initiatives;
+      if(_pendingImportData.drills)DRILL_DATA=_pendingImportData.drills;
+    } else {
+      // Merge — add records that don't already exist (matched by date+injury+notes)
+      const imp=_pendingImportData.incidents||{};
+      Object.keys(imp).forEach(yr=>{
+        const y=parseInt(yr);
+        if(!DATA[y])DATA[y]=[];
+        const existing=DATA[y];
+        let added=0;
+        (imp[yr]||[]).forEach(rec=>{
+          const dup=existing.find(e=>e.date===rec.date&&e.injury===rec.injury&&(e.notes||'')===(rec.notes||''));
+          if(!dup){existing.push(rec);added++;}
+        });
+      });
+      // Merge initiatives
+      const impInit=_pendingImportData.initiatives||{};
+      Object.keys(impInit).forEach(yr=>{
+        const y=parseInt(yr);
+        if(!INIT_DATA[y])INIT_DATA[y]=[];
+        (impInit[yr]||[]).forEach(rec=>{
+          const dup=INIT_DATA[y].find(e=>e.date===rec.date&&e.cat===rec.cat&&(e.desc||'')===(rec.desc||''));
+          if(!dup)INIT_DATA[y].push(rec);
+        });
+      });
+      // Merge drills
+      const impDrills=_pendingImportData.drills||{};
+      Object.keys(impDrills).forEach(yr=>{
+        const y=parseInt(yr);
+        if(!DRILL_DATA[y])DRILL_DATA[y]=[];
+        (impDrills[yr]||[]).forEach(rec=>{
+          const dup=DRILL_DATA[y].find(e=>e.date===rec.date&&e.type===rec.type&&e.area===rec.area);
+          if(!dup)DRILL_DATA[y].push(rec);
+        });
+      });
+    }
+    // Rebuild year list and save
+    saveData();saveInitData();saveDrills();
+    allYears=[...new Set([...Object.keys(DATA).map(Number),...Object.keys(INIT_DATA).map(Number),...Object.keys(DRILL_DATA).map(Number)])].filter(y=>y>2000).sort();
+    buildYearTabs();
+    renderAll();
+    status.style.color='var(--teal)';
+    status.textContent='✓ Import complete! Data updated across all tabs.';
+    setTimeout(()=>closeImportModal(),1800);
+    showToast('Import successful');
+  }catch(err){
+    status.style.color='var(--red)';
+    status.textContent='✗ Import failed: '+err.message;
+  }
+}
+
+// ── MONTH FILTER ──────────────────────────────────────────────────────────────
+function toggleMonthFilter(i){
+  activeMonthFilter=activeMonthFilter===i?null:i;
+  const btn=document.getElementById('clearFilterBtn');
+  if(btn)btn.style.display=activeMonthFilter!==null?'flex':'none';
+  renderAll();
+}
+function clearMonthFilter(){
+  activeMonthFilter=null;
+  const btn=document.getElementById('clearFilterBtn');
+  if(btn)btn.style.display='none';
+  renderAll();
+}
+
+// ── OVERVIEW PAGE ─────────────────────────────────────────────────────────────
+function renderKPIs(){
+  const rows=getFilteredData();
+  const total=rows.length;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('kpi-total',total);
+  set('kpi-total-sub',activeMonthFilter!==null?MONTH_FULL[activeMonthFilter]:'Year to date');
+  set('kpi-record',rows.filter(r=>r.classification==='Recordable').length);
+  set('kpi-firstaid',rows.filter(r=>r.classification==='First Aid').length);
+  set('kpi-nearmiss',rows.filter(r=>r.classification==='Near Miss').length);
+  set('kpi-propdmg',rows.filter(r=>r.classification==='Property Damage').length);
+  const app=rows.filter(r=>isApprentice(r)).length;
+  set('kpi-apprentice',total?Math.round(app/total*100)+'%':'0%');
+}
+
+function renderMonthly(){
+  const rows=getYearData(activeYear);
+  const counts=Array(12).fill(0);
+  rows.forEach(r=>{if(r.month>=0&&r.month<12)counts[r.month]++;});
+  const mxi=counts.indexOf(Math.max(...counts));
+  const mb=document.getElementById('monthly-badge');
+  if(mb)mb.textContent=MONTHS[mxi]+' peak: '+Math.max(...counts);
+  const el=document.getElementById('monthlyChart');if(!el)return;
+  if(charts.monthly)charts.monthly.destroy();
+  charts.monthly=new Chart(el.getContext('2d'),{type:'bar',data:{labels:MONTHS,datasets:[{data:counts,backgroundColor:counts.map((c,i)=>i===mxi?'#e85c2c':'rgba(255,255,255,0.07)'),borderColor:counts.map((c,i)=>i===mxi?'#e85c2c':'rgba(255,255,255,0.13)'),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10},autoSkip:false},grid:{display:false},border:{display:false}},y:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}},onClick:(e,els)=>{if(els.length){const i=els[0].index;activeMonthFilter=activeMonthFilter===i?null:i;const btn=document.getElementById('clearFilterBtn');if(btn)btn.style.display=activeMonthFilter!==null?'flex':'none';renderAll();}}}});
+}
+
+function renderClassChart(){
+  const rows=getFilteredData();
+  const cats=Object.keys(CLASS_COLORS);
+  const counts=cats.map(c=>rows.filter(r=>r.classification===c).length);
+  const total=counts.reduce((a,b)=>a+b,0);
+  const leg=document.getElementById('classLegend');
+  if(leg)leg.innerHTML=cats.map((c,i)=>`<span class="legend-item"><span class="legend-dot" style="background:${Object.values(CLASS_COLORS)[i]}"></span>${c} ${total?Math.round(counts[i]/total*100)+'%':''}</span>`).join('');
+  const el=document.getElementById('classChart');if(!el)return;
+  if(charts.classC)charts.classC.destroy();
+  charts.classC=new Chart(el.getContext('2d'),{type:'doughnut',data:{labels:cats,datasets:[{data:counts,backgroundColor:Object.values(CLASS_COLORS),borderColor:'#141618',borderWidth:3,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}});
+}
+
+function renderDOW(){
+  const rows=getFilteredData();
+  const counts=DAYS.map(d=>rows.filter(r=>r.dow===d).length);
+  const mv=Math.max(...counts,0);
+  const el=document.getElementById('dowChart');if(!el)return;
+  if(charts.dow)charts.dow.destroy();
+  charts.dow=new Chart(el.getContext('2d'),{type:'bar',data:{labels:DAYS.map(d=>d.slice(0,3)),datasets:[{data:counts,backgroundColor:counts.map(c=>c===mv&&mv>0?'#d4a843':'rgba(212,168,67,0.18)'),borderColor:counts.map(c=>c===mv&&mv>0?'#d4a843':'rgba(212,168,67,0.35)'),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});
+}
+
+function renderInjury(){
+  const rows=getFilteredData();
+  const injMap={};rows.forEach(r=>{injMap[r.injury]=(injMap[r.injury]||0)+1;});
+  const sorted=Object.entries(injMap).sort((a,b)=>b[1]-a[1]);
+  const leg=document.getElementById('injuryLegend');
+  if(leg)leg.innerHTML=sorted.map(([t],i)=>`<span class="legend-item"><span class="legend-dot" style="background:${INJURY_COLORS[i%INJURY_COLORS.length]}"></span>${t}</span>`).join('');
+  const el=document.getElementById('injuryChart');if(!el)return;
+  if(charts.injury)charts.injury.destroy();
+  charts.injury=new Chart(el.getContext('2d'),{type:'bar',indexAxis:'y',data:{labels:sorted.map(([t])=>t.length>22?t.slice(0,22)+'…':t),datasets:[{data:sorted.map(([,v])=>v),backgroundColor:sorted.map((_,i)=>INJURY_COLORS[i%INJURY_COLORS.length]+'55'),borderColor:sorted.map((_,i)=>INJURY_COLORS[i%INJURY_COLORS.length]),borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},y:{ticks:{color:'#9a9a96',font:{size:10}},grid:{display:false},border:{display:false}}}}});
+}
+
+function renderMonthStrip(){
+  const rows=getYearData(activeYear);
+  const counts=Array(12).fill(0);
+  rows.forEach(r=>{if(r.month>=0&&r.month<12)counts[r.month]++;});
+  const max=Math.max(...counts,1);
+  const el=document.getElementById('monthStrip');if(!el)return;
+  el.innerHTML=MONTHS.map((m,i)=>{
+    const c=counts[i];const lv=c===0?0:c<max*.33?1:c<max*.66?2:3;
+    const act=activeMonthFilter===i;
+    return`<div class="month-cell" data-level="${lv}" style="${act?'border-color:#e85c2c;background:rgba(232,92,44,0.12);':''}" onclick="toggleMonthFilter(${i})"><span class="month-name">${m}</span><span class="month-count">${c}</span></div>`;
+  }).join('');
+}
+
+function renderCause(){
+  const rows=getFilteredData();
+  const cm={};rows.forEach(r=>{cm[r.cause]=(cm[r.cause]||0)+1;});
+  const sorted=Object.entries(cm).sort((a,b)=>b[1]-a[1]);
+  const el=document.getElementById('causeChart');if(!el)return;
+  if(charts.cause)charts.cause.destroy();
+  charts.cause=new Chart(el.getContext('2d'),{type:'bar',indexAxis:'y',data:{labels:sorted.map(([c])=>c.length>24?c.slice(0,24)+'…':c),datasets:[{data:sorted.map(([,v])=>v),backgroundColor:'rgba(74,143,232,0.25)',borderColor:'#4a8fe8',borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},y:{ticks:{color:'#9a9a96',font:{size:10}},grid:{display:false},border:{display:false}}}}});
+}
+
+function renderTimeChart(){
+  const rows=getFilteredData();
+  const buckets=['morning','midday','postlunch','afternoon','endshift'];
+  const labels=['Morning\n7–10:30','Mid-day','Post-lunch','Afternoon','End shift'];
+  const counts=buckets.map(b=>rows.filter(r=>r.time===b).length);
+  const mv=Math.max(...counts,0);
+  const el=document.getElementById('timeChart');if(!el)return;
+  if(charts.time)charts.time.destroy();
+  charts.time=new Chart(el.getContext('2d'),{type:'bar',data:{labels,datasets:[{data:counts,backgroundColor:counts.map(c=>c===mv&&mv>0?'rgba(232,92,44,0.7)':'rgba(232,92,44,0.2)'),borderColor:counts.map(c=>c===mv&&mv>0?'#e85c2c':'rgba(232,92,44,0.4)'),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:9}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});
+}
+
+const RECS=[
+  {icon:'ti-shield',color:'#e85c2c',bg:'rgba(232,92,44,0.12)',title:'Kevlar sleeve mandate',body:'Require Kevlar for all wire-pull and framing-adjacent tasks'},
+  {icon:'ti-tool',color:'#4a8fe8',bg:'rgba(74,143,232,0.12)',title:'Right-tool stand-up',body:'Replace razor knives with mechanical strippers'},
+  {icon:'ti-eye',color:'#2ab89a',bg:'rgba(42,184,154,0.12)',title:'Doffing procedure',body:'Train "lean forward" method to prevent eye foreign bodies on PPE removal'},
+  {icon:'ti-barbell',color:'#d4a843',bg:'rgba(212,168,67,0.12)',title:'50 lb lift limit',body:'Easier access to wire tuggers & mechanical benders; re-brief limits'},
+  {icon:'ti-hand-stop',color:'#a855f7',bg:'rgba(168,85,247,0.12)',title:'Stop Work Authority',body:'Reinforce SWA — route redesigns, dusty conditions, single-person limits'},
+  {icon:'ti-users',color:'#e24b4a',bg:'rgba(226,75,74,0.12)',title:'Monday morning focus',body:'Increase supervisor presence and mentoring at shift start on Mondays'},
+];
+function renderRecs(){
+  const el=document.getElementById('recList');if(!el)return;
+  el.innerHTML=RECS.map(r=>`<div class="rec-item"><div class="rec-icon" style="background:${r.bg};color:${r.color};"><i class="ti ${r.icon}" style="font-size:14px"></i></div><div class="rec-text"><strong>${r.title}</strong>${r.body}</div></div>`).join('');
+}
+
+// ── INCIDENTS PAGE ────────────────────────────────────────────────────────────
+function setClassFilter(cls,el){
+  classFilter=cls;
+  document.querySelectorAll('.class-tab').forEach(t=>{t.className='class-tab';});
+  const map={all:'all','Near Miss':'near','First Aid':'first','Recordable':'record','Property Damage':'prop'};
+  if(el)el.classList.add('active-'+(map[cls]||'all'));
+  renderIncidentPage();
+}
+function renderIncidentPage(){
+  const all=getFilteredData();
+  const rows=getClassFilteredData();
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('inc-nm',all.filter(r=>r.classification==='Near Miss').length);
+  set('inc-fa',all.filter(r=>r.classification==='First Aid').length);
+  set('inc-rec',all.filter(r=>r.classification==='Recordable').length);
+  set('inc-pd',all.filter(r=>r.classification==='Property Damage').length);
+  set('incLogCount',rows.length+' records');
+  set('incLogSub',classFilter==='all'?'All incidents':'Filtered: '+classFilter);
+  const cp={'Recordable':'pill-red','First Aid':'pill-teal','Near Miss':'pill-purple','Property Damage':'pill-amber'};
+  const tb=document.getElementById('incidentTbody');if(!tb)return;
+  tb.innerHTML=rows.map((r,i)=>`<tr>
+    <td style="font-family:var(--mono);font-size:11px;color:var(--text2);">${r.date}</td>
+    <td>${(r.dow||'').slice(0,3)}</td>
+    <td style="max-width:110px;">${r.injury||''}</td>
+    <td><span class="pill ${cp[r.classification]||'pill-blue'}">${r.classification||''}</span></td>
+    <td style="font-size:11px;">${r.level||''}</td>
+    <td style="font-size:11px;">${r.timeRaw||r.time||''}</td>
+    <td style="font-size:11px;">${(r.ppe||'').startsWith('Yes — c')?'<span style="color:var(--teal)">Full</span>':(r.ppe==='No'?'<span style="color:var(--red)">No</span>':'<span style="color:var(--gold)">Partial</span>')}</td>
+    <td style="max-width:120px;font-size:11px;color:var(--text2);">${(r.cause||'').length>28?r.cause.slice(0,28)+'…':r.cause||''}</td>
+    <td style="max-width:180px;font-size:11px;color:var(--text3);">${(r.notes||'').length>45?r.notes.slice(0,45)+'…':r.notes||''}</td>
+    <td><button onclick="deleteIncident(${i})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:4px;" title="Delete"><i class="ti ti-trash"></i></button></td>
+  </tr>`).join('');
+}
+function deleteIncident(idx){
+  if(!confirm('Delete this incident?'))return;
+  const filtered=getClassFilteredData();
+  const target=filtered[idx];
+  const yr=DATA[activeYear]||[];
+  const ri=yr.findIndex(r=>r.date===target.date&&r.injury===target.injury&&r.notes===target.notes);
+  if(ri>-1){
+    var deleted = yr.splice(ri,1)[0];
+    if(deleted && deleted.id) sbDeleteIncident(deleted.id);
+  }
+  saveData();renderAll();
+}
+
+// ── WORKFORCE PAGE ────────────────────────────────────────────────────────────
+function renderWorkforcePage(){
+  const rows=getFilteredData();
+  const appC=Array(12).fill(0),jwC=Array(12).fill(0),fmC=Array(12).fill(0);
+  rows.forEach(r=>{const m=r.month;if(m<0||m>11)return;if(isApprentice(r))appC[m]++;else if(isJW(r))jwC[m]++;else if(isForeman(r))fmC[m]++;});
+  const wl=document.getElementById('wfLegend');
+  if(wl)wl.innerHTML=[{l:'Apprentice',c:'#4a8fe8'},{l:'Journeyman',c:'#2ab89a'},{l:'Foreman',c:'#d4a843'}].map(x=>`<span class="legend-item"><span class="legend-dot" style="background:${x.c}"></span>${x.l}</span>`).join('');
+  const we=document.getElementById('wfChart');if(we){if(charts.wf)charts.wf.destroy();charts.wf=new Chart(we.getContext('2d'),{type:'bar',data:{labels:MONTHS,datasets:[{label:'Apprentice',data:appC,backgroundColor:'rgba(74,143,232,0.7)',stack:'wf',borderRadius:3},{label:'Journeyman',data:jwC,backgroundColor:'rgba(42,184,154,0.7)',stack:'wf',borderRadius:3},{label:'Foreman',data:fmC,backgroundColor:'rgba(212,168,67,0.7)',stack:'wf',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{color:'#5e5e5a',font:{size:9},autoSkip:false},grid:{display:false},border:{display:false}},y:{stacked:true,ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});}
+  const total=rows.length;
+  const levels=[{key:'Apprentice',label:'Apprentices',cause:'Training / tool misuse',pc:'pill-red',color:'#e24b4a'},{key:'Journeyman',label:'Journeymen',cause:'Complacency / ergonomics',pc:'pill-teal',color:'#2ab89a'},{key:'Foreman',label:'Foremen',cause:'Over-exertion / rushing',pc:'pill-amber',color:'#d4a843'},{key:'Installer',label:'Installers',cause:'PPE / tool use',pc:'pill-blue',color:'#4a8fe8'},{key:'Stockman',label:'Stockman',cause:'Lifting / rushing',pc:'pill-orange',color:'#e85c2c'},{key:'Driver',label:'Drivers',cause:'Lifting / ergonomics',pc:'pill-green',color:'#4caf50'}];
+  const wt=document.getElementById('wfTable');if(wt)wt.innerHTML='<thead><tr><th>Level</th><th>Count</th><th>Primary cause</th><th>Share</th></tr></thead><tbody>'+levels.map(lv=>{const c=rows.filter(r=>(r.level||'').includes(lv.key)).length;const pct=total?Math.round(c/total*100):0;return`<tr><td><span class="pill ${lv.pc}">${lv.label}</span></td><td style="font-family:var(--mono);">${c}</td><td style="color:var(--text2);font-size:11px;">${lv.cause}</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="font-size:11px;color:var(--text2);font-family:var(--mono);">${pct}%</span><div class="prog-wrap" style="width:44px;"><div class="prog-bar" style="width:${pct}%;background:${lv.color};"></div></div></div></td></tr>`;}).join('')+'</tbody>';
+  const officeRoles=['Administration','Project Manager','PE','PX','HR','Accounting'];
+  const officeC=officeRoles.map(r=>rows.filter(i=>workerGroup(i)==='office'&&(i.level||'').includes(r.split(' ')[0])).length);
+  const oe=document.getElementById('officeChart');if(oe){if(charts.office)charts.office.destroy();charts.office=new Chart(oe.getContext('2d'),{type:'bar',data:{labels:['Admin','PM','PE','PX','HR','Acctg'],datasets:[{data:officeC,backgroundColor:'rgba(168,85,247,0.3)',borderColor:'#a855f7',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});}
+  const whRoles=['Stockman','Administration','Manager','Production','Delivery Driver'];
+  const whC=whRoles.map(r=>rows.filter(i=>(workerGroup(i)==='warehouse'||i.level===r)&&(i.level||'').includes(r.split(' ')[0])).length);
+  const whe=document.getElementById('warehouseChart');if(whe){if(charts.warehouse)charts.warehouse.destroy();charts.warehouse=new Chart(whe.getContext('2d'),{type:'bar',data:{labels:['Stockman','Admin','Manager','Production','Driver'],datasets:[{data:whC,backgroundColor:'rgba(212,168,67,0.3)',borderColor:'#d4a843',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});}
+  const roleMap={};rows.forEach(r=>{const l=r.level||'Unknown';roleMap[l]=(roleMap[l]||0)+1;});
+  const roleSorted=Object.entries(roleMap).sort((a,b)=>b[1]-a[1]);
+  const are=document.getElementById('allRolesChart');if(are){if(charts.allRoles)charts.allRoles.destroy();charts.allRoles=new Chart(are.getContext('2d'),{type:'bar',indexAxis:'y',data:{labels:roleSorted.map(([l])=>l.length>22?l.slice(0,22)+'…':l),datasets:[{data:roleSorted.map(([,v])=>v),backgroundColor:'rgba(232,92,44,0.3)',borderColor:'#e85c2c',borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},y:{ticks:{color:'#9a9a96',font:{size:10}},grid:{display:false},border:{display:false}}}}});}
+  const groups=['Field','Office','Warehouse'];
+  const ppeC=groups.map(g=>{const gr=rows.filter(r=>workerGroup(r)===g.toLowerCase());return gr.length?Math.round(gr.filter(r=>(r.ppe||'').startsWith('Yes — c')).length/gr.length*100):0;});
+  const ppe=document.getElementById('ppeChart');if(ppe){if(charts.ppe)charts.ppe.destroy();charts.ppe=new Chart(ppe.getContext('2d'),{type:'bar',data:{labels:groups,datasets:[{data:ppeC,backgroundColor:ppeC.map(v=>v>=80?'rgba(42,184,154,0.4)':v>=60?'rgba(212,168,67,0.4)':'rgba(226,75,74,0.4)'),borderColor:ppeC.map(v=>v>=80?'#2ab89a':v>=60?'#d4a843':'#e24b4a'),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'% fully compliant'}}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:11}},grid:{display:false},border:{display:false}},y:{max:100,ticks:{color:'#5e5e5a',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});}
+}
+
+// ── OSHA PAGE ─────────────────────────────────────────────────────────────────
+function renderOSHA(){
+  const rows=getYearData(activeYear);
+  const recs=rows.filter(r=>r.classification==='Recordable');
+  const daysAway=recs.filter(r=>(r.daysAway||0)>0).length;
+  const restricted=recs.filter(r=>(r.daysRestricted||0)>0&&!((r.daysAway||0)>0)).length;
+  const other=Math.max(0,recs.length-daysAway-restricted);
+  const hoursEl=document.getElementById('oshaHours');const empEl=document.getElementById('oshaEmployees');
+  const hours=parseInt(hoursEl?hoursEl.value:200000)||200000;
+  const emp=parseInt(empEl?empEl.value:50)||50;
+  const trir=((recs.length*200000)/hours).toFixed(2);
+  const dart=(((daysAway+restricted)*200000)/hours).toFixed(2);
+  const totalDA=recs.reduce((a,r)=>a+(r.daysAway||0),0);
+  const totalDR=recs.reduce((a,r)=>a+(r.daysRestricted||0),0);
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('o-total-rec',recs.length);set('o-days-away',daysAway);set('o-restricted',restricted);
+  set('o-other-rec',other);set('o-trir',trir);set('o-dart',dart);
+  set('osha300year','Year: '+activeYear);
+  const ob=document.getElementById('osha300Body');
+  if(ob)ob.innerHTML=recs.map((r,i)=>`<tr><td>${i+1}</td><td style="color:var(--text2);font-size:11px;">[On file]</td><td style="font-size:11px;">${r.level||''}</td><td style="font-family:var(--mono);font-size:11px;">${r.date||''}</td><td style="font-size:11px;">Jobsite</td><td style="max-width:140px;font-size:11px;">${(r.notes||'').length>55?r.notes.slice(0,55)+'…':r.notes||''}</td><td><span class="badge ${(r.daysAway||0)>0?'badge-red':(r.daysRestricted||0)>0?'badge-gold':'badge-teal'}">${(r.daysAway||0)>0?'Days Away':(r.daysRestricted||0)>0?'Restricted':'Other Rec.'}</span></td><td style="text-align:center;font-family:var(--mono);">${r.daysAway||0}</td><td style="text-align:center;font-family:var(--mono);">${r.daysRestricted||0}</td><td style="font-size:11px;">${r.injury||''}</td></tr>`).join('');
+  const ab=document.getElementById('osha300ABody');
+  if(ab)ab.innerHTML=[['Total recordable cases',recs.length],['Cases with days away from work',daysAway],['Cases with restricted activity or job transfer',restricted],['Other recordable cases',other],['Total days away from work',totalDA],['Total days of job transfer or restriction',totalDR],['Total hours worked (entered)',hours.toLocaleString()],['Annual average employees',emp],['Total Recordable Incident Rate (TRIR)',trir],['DART Rate',dart]].map(([l,v],i)=>`<tr ${i>=8?'class="osha-total"':''}><td>${l}</td><td style="text-align:right;font-family:var(--mono);" class="${i>=8?'osha-highlight':''}">${typeof v==='number'?v.toLocaleString():v}</td></tr>`).join('');
+  const rbm=Array(12).fill(0);recs.forEach(r=>{if(r.month>=0&&r.month<12)rbm[r.month]++;});
+  const rte=document.getElementById('recTrendChart');if(rte){if(charts.recTrend)charts.recTrend.destroy();charts.recTrend=new Chart(rte.getContext('2d'),{type:'line',data:{labels:MONTHS,datasets:[{data:rbm,borderColor:'#e24b4a',backgroundColor:'rgba(226,75,74,0.1)',borderWidth:2,pointBackgroundColor:'#e24b4a',pointRadius:4,tension:.3,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10},autoSkip:false},grid:{display:false},border:{display:false}},y:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});}
+}
+
+// ── INITIATIVE PAGE ───────────────────────────────────────────────────────────
+function getInitYearData(){return INIT_DATA[activeYear]||[];}
+function renderInitiativePage(){
+  const entries=getInitYearData();
+  const ic=document.getElementById('initCards');
+  if(ic)ic.innerHTML=INIT_CATS.map((cat,i)=>{const c=entries.filter(e=>e.cat===cat).length;return`<div class="init-card"><div class="init-icon" style="color:${INIT_COLORS[i]};"><i class="ti ${INIT_ICONS[i]}" style="font-size:20px;"></i></div><div class="init-title">${cat}</div><div class="init-count" style="color:${INIT_COLORS[i]};">${c}</div><div class="init-label">activities logged</div></div>`;}).join('');
+  const datasets=INIT_CATS.map((cat,i)=>{const bm=Array(12).fill(0);entries.filter(e=>e.cat===cat).forEach(e=>{const m=new Date(e.date+'T12:00:00').getMonth();if(m>=0&&m<12)bm[m]++;});return{label:cat,data:bm,borderColor:INIT_COLORS[i],backgroundColor:INIT_COLORS[i]+'22',borderWidth:2,pointRadius:3,tension:.3,fill:false};});
+  const il=document.getElementById('initLegend');
+  if(il)il.innerHTML=INIT_CATS.map((c,i)=>`<span class="legend-item"><span class="legend-dot" style="background:${INIT_COLORS[i]}"></span>${c.replace('Increase ','')}</span>`).join('');
+  const ite=document.getElementById('initTrendChart');if(ite){if(charts.initTrend)charts.initTrend.destroy();charts.initTrend=new Chart(ite.getContext('2d'),{type:'line',data:{labels:MONTHS,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10},autoSkip:false},grid:{display:false},border:{display:false}},y:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});}
+  const pieCounts=INIT_CATS.map(cat=>entries.filter(e=>e.cat===cat).length);
+  const ipe=document.getElementById('initPieChart');if(ipe){if(charts.initPie)charts.initPie.destroy();charts.initPie=new Chart(ipe.getContext('2d'),{type:'doughnut',data:{labels:INIT_CATS.map(c=>c.replace('Increase ','')),datasets:[{data:pieCounts,backgroundColor:INIT_COLORS.map(c=>c+'bb'),borderColor:'#141618',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:false}}}});}
+  const it=document.getElementById('initTotal');if(it)it.textContent=entries.length+' activities logged this year';
+  const ilog=document.getElementById('initLog');
+  if(ilog)ilog.innerHTML=entries.length?[...entries].reverse().map((e,i)=>`<div class="init-log-item"><div style="display:flex;gap:8px;align-items:flex-start;flex:1;min-width:0;"><span style="width:10px;height:10px;min-width:10px;border-radius:2px;background:${INIT_COLORS[INIT_CATS.indexOf(e.cat)]};margin-top:3px;"></span><div style="min-width:0;"><div style="font-size:11px;font-weight:600;color:var(--text);">${e.cat.replace('Increase ','')}</div><div style="font-size:11px;color:var(--text2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;">${e.desc||''}</div></div></div><div style="display:flex;align-items:center;gap:6px;flex-shrink:0;"><span style="font-size:11px;color:var(--text3);font-family:var(--mono);">${e.date}</span><button class="init-del" onclick="deleteInit(${entries.length-1-i})"><i class="ti ti-trash" style="font-size:13px;"></i></button></div></div>`).join(''):`<div style="font-size:12px;color:var(--text3);padding:16px 0;">No activities logged yet for ${activeYear}.</div>`;
+}
+function addInitiative(){
+  const cat=document.getElementById('init_cat').value;
+  const date=document.getElementById('init_date').value;
+  const desc=document.getElementById('init_desc').value.trim();
+  if(!date){showToast('Please select a date','warn');return;}
+  const y=parseInt(date.split('-')[0]);
+  if(!INIT_DATA[y])INIT_DATA[y]=[];
+  var initRec = {cat:cat,date:date,desc:desc};
+  INIT_DATA[y].push(initRec);
+  saveInitData();
+  sbSaveInitiative(initRec).then(function(){ saveInitData(); });
+  document.getElementById('init_desc').value='';
+  if(y!==activeYear){activeYear=y;if(!allYears.includes(y)){allYears.push(y);allYears.sort();}buildYearTabs();}
+  renderInitiativePage();showToast('Activity logged');
+}
+function deleteInit(idx){
+  if(!confirm('Remove this entry?'))return;
+  var initArr = INIT_DATA[activeYear]||[];
+  var deletedInit = initArr.splice(idx,1)[0];
+  if(deletedInit && deletedInit.id) sbDeleteInitiative(deletedInit.id);
+  saveInitData();renderInitiativePage();
+}
+
+// ── EMERGENCY DRILLS PAGE ─────────────────────────────────────────────────────
+function getDrillYear(){return DRILL_DATA[activeYear]||[];}
+function calcDuration(s,e){if(!s||!e)return null;const[sh,sm]=s.split(':').map(Number);const[eh,em]=e.split(':').map(Number);const m=(eh*60+em)-(sh*60+sm);return m>0?m:null;}
+function fmtDuration(m){if(!m)return'—';if(m<60)return m+' min';return Math.floor(m/60)+'h '+(m%60)+'m';}
+function getFilteredDrillRows(){
+  let rows=getDrillYear();
+  const tf=document.getElementById('df_type');const ff=document.getElementById('df_facility');const rf=document.getElementById('df_result');
+  if(tf&&tf.value)rows=rows.filter(r=>r.type===tf.value);
+  if(ff&&ff.value)rows=rows.filter(r=>r.facility===ff.value);
+  if(rf&&rf.value)rows=rows.filter(r=>r.result===rf.value);
+  return rows;
+}
+function renderDrillLog(){renderDrillPage();}
+function addDrill(){
+  const date=document.getElementById('d_date').value;
+  if(!date){showToast('Please select a date','warn');return;}
+  const yr=parseInt(date.split('-')[0]);
+  const month=new Date(date+'T12:00:00').getMonth();
+  const start=document.getElementById('d_start').value;
+  const end=document.getElementById('d_end').value;
+  const rec={date,month,type:document.getElementById('d_type').value,facility:document.getElementById('d_facility').value,area:document.getElementById('d_area').value,start,end,duration:calcDuration(start,end),result:document.getElementById('d_result').value,conductor:document.getElementById('d_conductor').value.trim(),notes:document.getElementById('d_notes').value.trim()};
+  if(!DRILL_DATA[yr])DRILL_DATA[yr]=[];
+  DRILL_DATA[yr].push(rec);saveDrills();
+  sbSaveDrill(rec).then(function(){ saveDrills(); });
+  document.getElementById('d_start').value='';document.getElementById('d_end').value='';
+  document.getElementById('d_conductor').value='';document.getElementById('d_notes').value='';
+  if(yr!==activeYear){activeYear=yr;if(!allYears.includes(yr)){allYears.push(yr);allYears.sort();}buildYearTabs();}
+  renderDrillPage();showToast('Drill record saved');
+}
+function deleteDrill(idx){
+  if(!confirm('Delete this drill record?'))return;
+  const filtered=getFilteredDrillRows();const target=filtered[idx];
+  const yr=DRILL_DATA[activeYear]||[];
+  const ri=yr.findIndex(r=>r.date===target.date&&r.type===target.type&&r.area===target.area&&r.start===target.start);
+  if(ri>-1){
+    var deletedDrill = yr.splice(ri,1)[0];
+    if(deletedDrill && deletedDrill.id) sbDeleteDrill(deletedDrill.id);
+  }
+  saveDrills();renderDrillPage();
+}
+function renderDrillPage(){
+  const all=getDrillYear();
+  const total=all.length;
+  const passes=all.filter(r=>r.result==='Pass').length;
+  const fails=all.filter(r=>r.result==='Fail').length;
+  const allDurs=all.filter(r=>r.duration).map(r=>r.duration);
+  const avgDur=allDurs.length?Math.round(allDurs.reduce((a,b)=>a+b,0)/allDurs.length):null;
+  const dkr=document.getElementById('drillKpiRow');
+  if(dkr)dkr.innerHTML=`<div class="kpi-card cb-accent"><div class="kpi-label">Total Drills</div><div class="kpi-value">${total}</div><div class="kpi-sub">${activeYear}</div></div><div class="kpi-card cb-teal"><div class="kpi-label">Pass</div><div class="kpi-value">${passes}</div><div class="kpi-sub">${total?Math.round(passes/total*100):0}%</div></div><div class="kpi-card cb-gold"><div class="kpi-label">Pass w/ Notes</div><div class="kpi-value">${all.filter(r=>r.result==='Pass with notes').length}</div><div class="kpi-sub">Minor issues</div></div><div class="kpi-card cb-blue"><div class="kpi-label">Needs Work</div><div class="kpi-value">${all.filter(r=>r.result==='Needs improvement').length}</div><div class="kpi-sub">Action required</div></div><div class="kpi-card cb-red"><div class="kpi-label">Fail</div><div class="kpi-value">${fails}</div><div class="kpi-sub">Re-drill needed</div></div><div class="kpi-card cb-purple"><div class="kpi-label">Avg Duration</div><div class="kpi-value" style="font-size:20px;margin-top:4px;">${avgDur?avgDur+' min':'—'}</div><div class="kpi-sub">Completion time</div></div>`;
+  const rc=DRILL_TYPES.map(t=>{const tr=all.filter(r=>r.type===t);return{type:t,pass:tr.filter(r=>r.result==='Pass').length,pwnotes:tr.filter(r=>r.result==='Pass with notes').length,needs:tr.filter(r=>r.result==='Needs improvement').length,fail:tr.filter(r=>r.result==='Fail').length};});
+  const rl=document.getElementById('drillResultLegend');
+  if(rl)rl.innerHTML=['Pass','Pass with notes','Needs improvement','Fail'].map(r=>`<span class="legend-item"><span class="legend-dot" style="background:${RESULT_COLORS[r]}"></span>${r}</span>`).join('');
+  const dre=document.getElementById('drillResultChart');if(dre){if(charts.drillResult)charts.drillResult.destroy();charts.drillResult=new Chart(dre.getContext('2d'),{type:'bar',data:{labels:DRILL_TYPES,datasets:[{label:'Pass',data:rc.map(r=>r.pass),backgroundColor:'rgba(42,184,154,0.7)',stack:'r',borderRadius:3},{label:'Pass with notes',data:rc.map(r=>r.pwnotes),backgroundColor:'rgba(74,143,232,0.7)',stack:'r',borderRadius:3},{label:'Needs improvement',data:rc.map(r=>r.needs),backgroundColor:'rgba(212,168,67,0.7)',stack:'r',borderRadius:3},{label:'Fail',data:rc.map(r=>r.fail),backgroundColor:'rgba(226,75,74,0.7)',stack:'r',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{color:'#5e5e5a',font:{size:11}},grid:{display:false},border:{display:false}},y:{stacked:true,ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});}
+  const mC=Array(12).fill(0);all.forEach(r=>{if(r.month>=0&&r.month<12)mC[r.month]++;});
+  const dme=document.getElementById('drillMonthChart');if(dme){if(charts.drillMonth)charts.drillMonth.destroy();charts.drillMonth=new Chart(dme.getContext('2d'),{type:'bar',data:{labels:MONTHS,datasets:[{data:mC,backgroundColor:'rgba(232,92,44,0.4)',borderColor:'#e85c2c',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:9},autoSkip:false},grid:{display:false},border:{display:false}},y:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});}
+  const avgD=DRILL_TYPES.map(t=>{const ds=all.filter(r=>r.type===t&&r.duration).map(r=>r.duration);return ds.length?Math.round(ds.reduce((a,b)=>a+b,0)/ds.length):0;});
+  const dte=document.getElementById('drillTimeChart');if(dte){if(charts.drillTime)charts.drillTime.destroy();charts.drillTime=new Chart(dte.getContext('2d'),{type:'bar',data:{labels:DRILL_TYPES,datasets:[{data:avgD,backgroundColor:DRILL_TYPES.map(t=>DRILL_COLORS[t]+'55'),borderColor:DRILL_TYPES.map(t=>DRILL_COLORS[t]),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+' min avg'}}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{color:'#5e5e5a',font:{size:10},callback:v=>v+'m'},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}}}}});}
+  const offFloors=['Floor 1','Floor 2','Floor 3','Floor 4','All Floors'];
+  const whAreas=['Office Area','Warehouse Floor','Both Areas'];
+  const allLocs=[...offFloors.map(f=>'Office: '+f),...whAreas.map(a=>'WH: '+a)];
+  const locC=[...offFloors.map(f=>all.filter(r=>r.facility==='office'&&r.area===f).length),...whAreas.map(a=>all.filter(r=>r.facility==='warehouse'&&r.area===a).length)];
+  const dle=document.getElementById('drillLocChart');if(dle){if(charts.drillLoc)charts.drillLoc.destroy();charts.drillLoc=new Chart(dle.getContext('2d'),{type:'bar',indexAxis:'y',data:{labels:allLocs,datasets:[{data:locC,backgroundColor:'rgba(168,85,247,0.3)',borderColor:'#a855f7',borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5e5e5a',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{display:false}},y:{ticks:{color:'#9a9a96',font:{size:9}},grid:{display:false},border:{display:false}}}}});}
+  const filtered=getFilteredDrillRows();
+  const dlc=document.getElementById('drillLogCount');if(dlc)dlc.textContent=filtered.length+' drill'+(filtered.length!==1?'s':'');
+  const rp={'Pass':'pill-teal','Pass with notes':'pill-blue','Needs improvement':'pill-amber','Fail':'pill-red'};
+  const dtb=document.getElementById('drillTbody');if(!dtb)return;
+  dtb.innerHTML=filtered.map((r,i)=>`<tr><td style="font-family:var(--mono);font-size:11px;color:var(--text2);">${r.date}</td><td><span class="pill" style="background:${DRILL_COLORS[r.type]}22;color:${DRILL_COLORS[r.type]};">${r.type}</span></td><td style="font-size:12px;text-transform:capitalize;">${r.facility}</td><td style="font-size:12px;">${r.area}</td><td style="font-family:var(--mono);font-size:11px;">${r.start||'—'}</td><td style="font-family:var(--mono);font-size:11px;">${r.end||'—'}</td><td style="font-family:var(--mono);font-size:11px;color:var(--text2);">${fmtDuration(r.duration)}</td><td><span class="pill ${rp[r.result]||'pill-blue'}">${r.result}</span></td><td style="font-size:11px;color:var(--text2);">${r.conductor||'—'}</td><td style="max-width:160px;font-size:11px;color:var(--text3);">${(r.notes||'').length>45?r.notes.slice(0,45)+'…':r.notes||'—'}</td><td><button onclick="deleteDrill(${i})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:4px;" title="Delete"><i class="ti ti-trash"></i></button></td></tr>`).join('')||`<tr><td colspan="11" style="color:var(--text3);font-size:12px;padding:16px 0;">No drills recorded for ${activeYear}. Log your first drill above.</td></tr>`;
+}
+
+// ── RENDER ALL ────────────────────────────────────────────────────────────────
+function renderAll(){
+  renderKPIs();
+  renderMonthly();
+  renderClassChart();
+  renderDOW();
+  renderInjury();
+  renderMonthStrip();
+  renderCause();
+  renderTimeChart();
+  renderRecs();
+  renderIncidentPage();
+  renderWorkforcePage();
+  renderOSHA();
+  renderInitiativePage();
+  renderDrillPage();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+
+// ════════════════════════════════════════════════════════════════════════════
+// ARCSAFE AUTH SYSTEM
+// ════════════════════════════════════════════════════════════════════════════
+const MASTER_RESET_CODE = 'ArcSafe-RC-2025-RESET';
+const PW_STORE = 'arcsafe_pw_v1';
+
+// Simple hash — XOR-based obfuscation so passwords aren't plain text in storage
+function hashPw(str) {
+  var h = 0;
+  for (var i = 0; i < str.length; i++) {
+    h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+  }
+  return h.toString(36);
+}
+
+function loadPw() {
+  try {
+    var r = localStorage.getItem(PW_STORE);
+    return r ? JSON.parse(r) : null;
+  } catch(e) { return null; }
+}
+function savePw(adminPw, viewPw) {
+  try {
+    localStorage.setItem(PW_STORE, JSON.stringify({
+      a: hashPw(adminPw),
+      v: hashPw(viewPw),
+      ts: Date.now()
+    }));
+    return true;
+  } catch(e) { return false; }
+}
+
+// ── SCREEN HELPERS ────────────────────────────────────────────────────────────
+function showScreen(id) {
+  ['setupScreen','loginScreen','resetScreen','changePwScreen'].forEach(function(s) {
+    var el = document.getElementById(s);
+    if (el) el.classList.add('hidden');
+  });
+  var target = document.getElementById(id);
+  if (target) target.classList.remove('hidden');
+}
+function showLoginScreen() { showScreen('loginScreen'); document.getElementById('loginPw').focus(); document.getElementById('loginErr').textContent=''; }
+function showResetScreen() { showScreen('resetScreen'); document.getElementById('resetCode').value=''; document.getElementById('resetErr').textContent=''; document.getElementById('resetOk').textContent=''; }
+function openChangePw() {
+  if (document.body.classList.contains('view-only')) { showToast('Admin access required','warn'); return; }
+  ['cpw_current','cpw_admin','cpw_view'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('cpwErr').textContent='';
+  document.getElementById('cpwOk').textContent='';
+  showScreen('changePwScreen');
+}
+function closeChangePw() { showScreen('loginScreen'); showScreen(''); document.getElementById('changePwScreen').classList.add('hidden'); }
+
+// ── TOGGLE PASSWORD VISIBILITY ────────────────────────────────────────────────
+function toggleVis(inputId, iconId) {
+  var inp = document.getElementById(inputId);
+  var icon = document.getElementById(iconId);
+  if (!inp) return;
+  if (inp.type === 'password') { inp.type = 'text';     if(icon) icon.className = 'ti ti-eye-off'; }
+  else                         { inp.type = 'password'; if(icon) icon.className = 'ti ti-eye'; }
+}
+
+// ── PASSWORD STRENGTH ────────────────────────────────────────────────────────
+function checkStrength(inputId, barId) {
+  var val = document.getElementById(inputId).value;
+  var bar = document.getElementById(barId);
+  if (!bar) return;
+  var score = 0;
+  if (val.length >= 6)  score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  var pct  = (score / 5) * 100;
+  var color = score <= 1 ? '#e24b4a' : score <= 2 ? '#d4a843' : score <= 3 ? '#4a8fe8' : '#2ab89a';
+  bar.style.width = pct + '%';
+  bar.style.background = color;
+}
+
+// ── FIRST-RUN SETUP ───────────────────────────────────────────────────────────
+function setupStep1Next() {
+  var p1 = document.getElementById('setup_admin1').value;
+  var p2 = document.getElementById('setup_admin2').value;
+  var err = document.getElementById('setupErr1');
+  if (p1.length < 6)  { err.textContent = 'Password must be at least 6 characters.'; return; }
+  if (p1 !== p2)      { err.textContent = 'Passwords do not match.'; return; }
+  err.textContent = '';
+  // Move to step 2
+  document.getElementById('setupStep1').style.display = 'none';
+  document.getElementById('setupStep2').style.display = 'block';
+  document.getElementById('setupDot1').className = 'setup-step-dot done';
+  document.getElementById('setupDot1').innerHTML = '✓';
+  document.getElementById('setupDot2').className = 'setup-step-dot active';
+  document.getElementById('setup_view1').focus();
+}
+function setupBack() {
+  document.getElementById('setupStep2').style.display = 'none';
+  document.getElementById('setupStep1').style.display = 'block';
+  document.getElementById('setupDot1').className = 'setup-step-dot active';
+  document.getElementById('setupDot1').innerHTML = '1';
+  document.getElementById('setupDot2').className = 'setup-step-dot';
+}
+function setupFinish() {
+  var adminPw = document.getElementById('setup_admin1').value;
+  var v1 = document.getElementById('setup_view1').value;
+  var v2 = document.getElementById('setup_view2').value;
+  var err = document.getElementById('setupErr2');
+  if (v1.length < 6)      { err.textContent = 'Password must be at least 6 characters.'; return; }
+  if (v1 !== v2)          { err.textContent = 'Passwords do not match.'; return; }
+  if (v1 === adminPw)     { err.textContent = 'View-only password must be different from admin password.'; return; }
+  err.textContent = '';
+  savePw(adminPw, v1);
+  applyRole('admin');
+  document.getElementById('setupScreen').classList.add('hidden');
+  showToast('Passwords created — welcome to ArcSafe ⚡');
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+function doLogin() {
+  var val = document.getElementById('loginPw').value;
+  var err = document.getElementById('loginErr');
+  var inp = document.getElementById('loginPw');
+  var pw = loadPw();
+  if (!pw) { err.textContent = 'No passwords found. Reload to run setup.'; return; }
+
+  if (hashPw(val) === pw.a) {
+    applyRole('admin');
+    document.getElementById('loginScreen').classList.add('hidden');
+    err.textContent = '';
+  } else if (hashPw(val) === pw.v) {
+    applyRole('viewer');
+    document.getElementById('loginScreen').classList.add('hidden');
+    err.textContent = '';
+  } else if (val === MASTER_RESET_CODE) {
+    // Recovery code entered on login screen — redirect to reset
+    showResetScreen();
+  } else {
+    err.textContent = 'Incorrect password. Please try again.';
+    inp.classList.add('error');
+    inp.value = '';
+    setTimeout(function(){ inp.classList.remove('error'); }, 400);
+  }
+}
+
+// ── RESET ─────────────────────────────────────────────────────────────────────
+function doReset() {
+  var code = document.getElementById('resetCode').value;
+  var err  = document.getElementById('resetErr');
+  var ok   = document.getElementById('resetOk');
+  if (code !== MASTER_RESET_CODE) {
+    err.textContent = 'Incorrect recovery code.';
+    document.getElementById('resetCode').classList.add('error');
+    document.getElementById('resetCode').value = '';
+    setTimeout(function(){ document.getElementById('resetCode').classList.remove('error'); }, 400);
+    return;
+  }
+  // Wipe stored passwords — force setup wizard again
+  try { localStorage.removeItem(PW_STORE); } catch(e) {}
+  err.textContent = '';
+  ok.textContent = '✓ Recovery code accepted. Reloading setup wizard…';
+  setTimeout(function() {
+    showScreen('setupScreen');
+    // Reset setup wizard state
+    document.getElementById('setupStep1').style.display = 'block';
+    document.getElementById('setupStep2').style.display = 'none';
+    document.getElementById('setupDot1').className = 'setup-step-dot active';
+    document.getElementById('setupDot1').innerHTML = '1';
+    document.getElementById('setupDot2').className = 'setup-step-dot';
+    ['setup_admin1','setup_admin2','setup_view1','setup_view2'].forEach(function(id){ document.getElementById(id).value=''; });
+    document.getElementById('setupErr1').textContent='';
+    document.getElementById('setupErr2').textContent='';
+  }, 1200);
+}
+
+// ── CHANGE PASSWORD (in-app) ──────────────────────────────────────────────────
+function doChangePw() {
+  var current = document.getElementById('cpw_current').value;
+  var newAdmin = document.getElementById('cpw_admin').value;
+  var newView  = document.getElementById('cpw_view').value;
+  var err = document.getElementById('cpwErr');
+  var ok  = document.getElementById('cpwOk');
+  var pw  = loadPw();
+  err.textContent = ''; ok.textContent = '';
+  if (!pw || hashPw(current) !== pw.a) { err.textContent = 'Current admin password is incorrect.'; return; }
+  if (newAdmin.length < 6)             { err.textContent = 'New admin password must be at least 6 characters.'; return; }
+  if (newView.length < 6)              { err.textContent = 'View-only password must be at least 6 characters.'; return; }
+  if (newAdmin === newView)            { err.textContent = 'Admin and view-only passwords must be different.'; return; }
+  savePw(newAdmin, newView);
+  ok.textContent = '✓ Passwords updated successfully.';
+  setTimeout(function(){ closeChangePw(); }, 1500);
+}
+
+// ── APPLY ROLE ────────────────────────────────────────────────────────────────
+function applyRole(role) {
+  var ri = document.getElementById('roleIndicator');
+  if (role === 'admin') {
+    document.body.classList.remove('view-only');
+    if (ri) { ri.className = 'admin'; ri.innerHTML = '<i class="ti ti-shield-filled" style="font-size:12px"></i> Admin'; }
+  } else {
+    document.body.classList.add('view-only');
+    if (ri) { ri.className = 'viewer'; ri.innerHTML = '<i class="ti ti-eye" style="font-size:12px"></i> View only'; }
+  }
+}
+
+// ── INIT AUTH ─────────────────────────────────────────────────────────────────
+(function initAuth() {
+  var pw = loadPw();
+  if (!pw) {
+    // First run — show setup wizard
+    showScreen('setupScreen');
+  } else {
+    // Passwords exist — show login
+    showScreen('loginScreen');
+    setTimeout(function(){ var el=document.getElementById('loginPw'); if(el) el.focus(); }, 100);
+  }
+}());
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Build password button + role indicator in header
+  const headerRight = document.querySelector('.header-right');
+  if(headerRight){
+  }
+  // Set today's date on all date fields
+  const today=new Date().toISOString().split('T')[0];
+  ['f_date','init_date','d_date'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=today;});
+  // Init dropdowns
+  updateLevelOptions();
+  updateDrillAreas();
+  // Initial render from local data first (instant)
+  buildYearTabs();
+  try{ renderAll(); }catch(e){ console.warn('renderAll error:',e); }
+  // Then sync from Supabase (updates if online)
+  setSyncStatus('syncing');
+  sbLoadAll();
+});
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FIRST-RUN SETUP SCREEN
+═══════════════════════════════════════════════════════════════════ -->
+<div class="auth-screen" id="setupScreen">
+  <div class="auth-card">
+    <div class="auth-logo"><i class="ti ti-bolt"></i></div>
+    <div class="auth-title">Welcome to ArcSafe ⚡</div>
+    <div class="auth-sub">First time setup — create your passwords.<br>This screen will never appear again.</div>
+
+    <div class="setup-step">
+      <div class="setup-step-dot active" id="setupDot1">1</div>
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
+      <div class="setup-step-dot" id="setupDot2">2</div>
+    </div>
+
+    <!-- Step 1: Admin password -->
+    <div id="setupStep1" style="width:100%;">
+      <label class="auth-label">Create admin password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="setup_admin1" placeholder="Admin password" oninput="checkStrength('setup_admin1','strengthBar1')">
+        <button class="auth-eye" onclick="toggleVis('setup_admin1','eye1')"><i class="ti ti-eye" id="eye1"></i></button>
+      </div>
+      <div class="auth-strength"><div class="auth-strength-bar" id="strengthBar1" style="width:0%"></div></div>
+      <label class="auth-label">Confirm admin password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="setup_admin2" placeholder="Confirm admin password">
+        <button class="auth-eye" onclick="toggleVis('setup_admin2','eye2')"><i class="ti ti-eye" id="eye2"></i></button>
+      </div>
+      <div class="auth-error" id="setupErr1"></div>
+      <button class="auth-btn" onclick="setupStep1Next()">Next →</button>
+      <div style="font-size:11px;color:#5e5e5a;text-align:center;margin-top:12px;line-height:1.6;">
+        Admin has full access to log, edit, and manage all data.
+      </div>
+    </div>
+
+    <!-- Step 2: View-only password -->
+    <div id="setupStep2" style="width:100%;display:none;">
+      <label class="auth-label">Create view-only password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="setup_view1" placeholder="View-only password" oninput="checkStrength('setup_view1','strengthBar2')">
+        <button class="auth-eye" onclick="toggleVis('setup_view1','eye3')"><i class="ti ti-eye" id="eye3"></i></button>
+      </div>
+      <div class="auth-strength"><div class="auth-strength-bar" id="strengthBar2" style="width:0%"></div></div>
+      <label class="auth-label">Confirm view-only password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="setup_view2" placeholder="Confirm view-only password">
+        <button class="auth-eye" onclick="toggleVis('setup_view2','eye4')"><i class="ti ti-eye" id="eye4"></i></button>
+      </div>
+      <div class="auth-error" id="setupErr2"></div>
+      <button class="auth-btn" onclick="setupFinish()">Create Passwords &amp; Enter →</button>
+      <button class="auth-btn secondary" onclick="setupBack()">← Back</button>
+      <div style="font-size:11px;color:#5e5e5a;text-align:center;margin-top:12px;line-height:1.6;">
+        View-only users can see all data but cannot log or edit anything.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     LOGIN SCREEN
+═══════════════════════════════════════════════════════════════════ -->
+<div class="auth-screen hidden" id="loginScreen">
+  <div class="auth-card">
+    <div class="auth-logo"><i class="ti ti-bolt"></i></div>
+    <div class="auth-title">ArcSafe ⚡ by RC</div>
+    <div class="auth-sub">Enter your password to continue.</div>
+    <div style="width:100%;">
+      <label class="auth-label">Password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="loginPw" placeholder="Enter password"
+          onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="auth-eye" onclick="toggleVis('loginPw','loginEye')"><i class="ti ti-eye" id="loginEye"></i></button>
+      </div>
+      <div class="auth-error" id="loginErr"></div>
+      <button class="auth-btn" onclick="doLogin()">Unlock</button>
+      <hr class="auth-divider">
+      <button class="auth-btn secondary" onclick="showResetScreen()">Forgot password?</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     RESET SCREEN
+═══════════════════════════════════════════════════════════════════ -->
+<div class="auth-screen hidden" id="resetScreen">
+  <div class="auth-card">
+    <div class="auth-logo" style="background:#d4a843;"><i class="ti ti-key"></i></div>
+    <div class="auth-title">Reset Passwords</div>
+    <div class="auth-sub">Enter your master recovery code to reset all passwords.<br>Your data will not be affected.</div>
+    <div style="width:100%;">
+      <label class="auth-label">Master recovery code</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="resetCode" placeholder="Enter recovery code"
+          onkeydown="if(event.key==='Enter')doReset()">
+        <button class="auth-eye" onclick="toggleVis('resetCode','resetEye')"><i class="ti ti-eye" id="resetEye"></i></button>
+      </div>
+      <div class="auth-error" id="resetErr"></div>
+      <div class="auth-success" id="resetOk"></div>
+      <button class="auth-btn" onclick="doReset()">Verify Recovery Code</button>
+      <button class="auth-btn secondary" onclick="showLoginScreen()">← Back to login</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CHANGE PASSWORD PANEL (admin only, in-app)
+═══════════════════════════════════════════════════════════════════ -->
+<div class="auth-screen hidden" id="changePwScreen" style="z-index:9100;">
+  <div class="auth-card">
+    <div class="auth-logo" style="background:#4a8fe8;"><i class="ti ti-lock-open"></i></div>
+    <div class="auth-title">Change Passwords</div>
+    <div class="auth-sub">Update admin and view-only passwords.</div>
+    <div style="width:100%;">
+      <label class="auth-label">Current admin password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="cpw_current" placeholder="Current admin password">
+        <button class="auth-eye" onclick="toggleVis('cpw_current','cpwEye0')"><i class="ti ti-eye" id="cpwEye0"></i></button>
+      </div>
+      <label class="auth-label">New admin password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="cpw_admin" placeholder="New admin password" oninput="checkStrength('cpw_admin','cpwStrength')">
+        <button class="auth-eye" onclick="toggleVis('cpw_admin','cpwEye1')"><i class="ti ti-eye" id="cpwEye1"></i></button>
+      </div>
+      <div class="auth-strength"><div class="auth-strength-bar" id="cpwStrength" style="width:0%"></div></div>
+      <label class="auth-label">New view-only password</label>
+      <div class="auth-input-wrap">
+        <input class="auth-input" type="password" id="cpw_view" placeholder="New view-only password">
+        <button class="auth-eye" onclick="toggleVis('cpw_view','cpwEye2')"><i class="ti ti-eye" id="cpwEye2"></i></button>
+      </div>
+      <div class="auth-error" id="cpwErr"></div>
+      <div class="auth-success" id="cpwOk"></div>
+      <button class="auth-btn" onclick="doChangePw()">Save New Passwords</button>
+      <button class="auth-btn secondary" onclick="closeChangePw()">Cancel</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
